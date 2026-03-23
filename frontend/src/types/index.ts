@@ -18,10 +18,9 @@ export interface User {
   department?: string;
   profileImageUrl?: string;
   bio?: string;
-  emailVerified: boolean;
-  isActive: boolean;
+  emailVerified: number; // Changed to number to match backend
   status: string; // Added status field
-  requiresApproval: boolean;
+  requiresApproval: number; // Changed to number to match backend
   approvedBy?: string;
   approvedAt?: string;
   createdAt: string;

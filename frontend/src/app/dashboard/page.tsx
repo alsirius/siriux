@@ -79,7 +79,7 @@ export default function DashboardPage() {
                   </div>
                   <div className="space-y-1 text-sm">
                     <p className="text-gray-600">Role: <span className="font-medium">{user.role}</span></p>
-                    <p className="text-gray-600">Status: <span className="font-medium">{user.isActive ? 'Active' : 'Inactive'}</span></p>
+                    <p className="text-gray-600">Status: <span className="font-medium">{user.status}</span></p>
                     <p className="text-gray-600">Member since: <span className="font-medium">{formatDate(user.createdAt)}</span></p>
                   </div>
                   <div className="mt-4">
