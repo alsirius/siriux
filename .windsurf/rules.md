@@ -296,6 +296,62 @@ backend/src/
 - **Test coverage** and test quality
 - **Documentation completeness** - Are both developer and user docs updated?
 
+## Git Workflow and Repository Management
+
+### Repository Information
+- **Organization**: alsirius
+- **Repository**: siriux
+- **URL**: https://github.com/alsirius/siriux
+- **Main Branch**: main
+- **Remote**: origin points to https://github.com/alsirius/siriux.git
+
+### Git Workflow Requirements
+- **ALWAYS commit changes** with descriptive messages using emojis for categorization
+- **ALWAYS push changes** to the remote repository after completing work
+- **USE semantic commit messages** with proper emoji categories:
+  - 🚀 Feature: New functionality
+  - 🔧 Fix: Bug fixes and corrections  
+  - 📚 Documentation: Documentation updates
+  - 🎨 Style: Code formatting and style changes
+  - ♻️ Refactor: Code refactoring without functional changes
+  - ✅ Test: Adding or updating tests
+  - 🔐 Security: Security-related changes
+  - 🗄️ Database: Database schema or migration changes
+- **ALWAYS include scope** in commit messages (e.g., "🔧 Fix login token field mismatch")
+- **NEVER commit sensitive data** like API keys, passwords, or .env files
+- **USE conventional commit format**: `<emoji> <scope>: <description>`
+
+### Git Commands and Workflow
+```bash
+# After making changes:
+git add .                    # Stage all changes
+git commit -m "🔧 Fix: Description of changes"  # Commit with emoji
+git push                     # Push to alsirius/siriux
+
+# Check repository status:
+git status                   # Check working directory
+git log --oneline -5         # Show recent commits
+git remote -v               # Verify remote configuration
+```
+
+### Branch Management
+- **Main branch is protected** - create feature branches for major changes
+- **USE descriptive branch names**: `feature/user-authentication`, `fix/password-change`
+- **MERGE feature branches** via pull requests for collaborative development
+- **DELETE merged branches** to keep repository clean
+
+### Repository Structure
+- **Root directory**: `/Users/jawwad/alsirius/als_pr_siriux`
+- **Git working directory**: Same as project root
+- **All development work** happens within this git repository
+- **Never create nested git repositories** within the project
+
+### Version Management
+- **Package version**: Currently 1.0.0 (in package.json)
+- **Semantic versioning**: Use `npm version patch/minor/major` for releases
+- **Git tags**: Create tags for releases: `git tag v1.0.1`
+- **Release workflow**: Tag commits and push tags for official releases
+
 ---
 
 These rules ensure consistency, security, and maintainability across the entire Siriux project. All AI assistants and developers must follow these guidelines when working on the codebase.
