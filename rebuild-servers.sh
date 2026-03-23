@@ -206,7 +206,7 @@ start_dev_servers() {
         # Load environment variables from the correct file
         if [ -f ".env.${ENV_SUFFIX}" ]; then
             echo -e "${BLUE}Loading environment from .env.${ENV_SUFFIX}${NC}"
-            export $(grep -v '^#' ".env.${ENV_SUFFIX}" | xargs)
+            export $(grep -E '^[A-Z_][A-Z0-9_]*=' ".env.${ENV_SUFFIX}" | cut -d'#' -f1 | xargs)
         fi
         
         # Start backend with environment
@@ -231,7 +231,7 @@ start_dev_servers() {
         # Load environment variables for frontend
         if [ -f ".env.${ENV_SUFFIX}" ]; then
             echo -e "${BLUE}Loading frontend environment from .env.${ENV_SUFFIX}${NC}"
-            export $(grep -v '^#' ".env.${ENV_SUFFIX}" | xargs)
+            export $(grep -E '^[A-Z_][A-Z0-9_]*=' ".env.${ENV_SUFFIX}" | cut -d'#' -f1 | xargs)
         fi
         
         # Start frontend with environment
