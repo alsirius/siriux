@@ -102,7 +102,7 @@ export function AuthProvider({ children }: AuthProviderProps): JSX.Element {
       if (response) {
         setState({
           user: response.user,
-          token: response.accessToken,
+          token: response.token,
           isAuthenticated: true,
           loading: false,
           error: null,

@@ -200,11 +200,11 @@ export class AuthService extends BaseApiService {
     
     if (response.success && response.data) {
       console.log('Login data:', response.data);
-      console.log('Access token:', response.data.accessToken);
+      console.log('Access token:', response.data.token);
       console.log('User data:', response.data.user);
       
-      // Store auth data using correct token field
-      this.setAuthData(response.data.accessToken, response.data.user);
+      // Store auth data using correct token field (backend returns 'token', not 'accessToken')
+      this.setAuthData(response.data.token, response.data.user);
     }
     
     return this.validateResponse(response);
