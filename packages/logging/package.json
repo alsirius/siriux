@@ -1,6 +1,6 @@
 {
   "name": "@siriux/logging",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Siriux Logging - Structured logging with correlation IDs and multiple transports",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -24,16 +24,16 @@
   "license": "MIT",
   "dependencies": {
     "@siriux/core": "^2.0.0",
+    "uuid": "^9.0.1",
     "winston": "^3.11.0",
-    "winston-daily-rotate-file": "^4.7.1",
-    "uuid": "^9.0.1"
+    "winston-daily-rotate-file": "^4.7.1"
   },
   "devDependencies": {
+    "@types/jest": "^29.5.8",
     "@types/node": "^20.10.5",
     "@types/uuid": "^9.0.7",
-    "typescript": "^5.3.3",
     "jest": "^29.7.0",
-    "@types/jest": "^29.5.8"
+    "typescript": "^5.3.3"
   },
   "files": [
     "dist/**/*"

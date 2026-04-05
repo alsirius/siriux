@@ -1,6 +1,6 @@
 {
   "name": "@siriux/docs",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Siriux Documentation - Complete guides and API documentation",
   "main": "index.js",
   "type": "module",
@@ -21,9 +21,9 @@
   "author": "jawwad@alsirius.co.uk",
   "license": "MIT",
   "devDependencies": {
+    "@types/node": "^20.11.24",
     "vitepress": "^1.0.0-rc.40",
-    "vue": "^3.4.21",
-    "@types/node": "^20.11.24"
+    "vue": "^3.4.21"
   },
   "files": [
     "docs/**/*",
