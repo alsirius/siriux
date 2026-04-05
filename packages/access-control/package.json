@@ -1,6 +1,6 @@
 {
   "name": "@siriux/access-control",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Siriux Access Control - Role-based access control, permissions, and policies",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
