@@ -1,10 +1,23 @@
-// Core exports
+// Core Siriux contracts and interfaces
 export * from './types';
-export * from './auth/middleware';
 
-// Re-export commonly used classes and functions
-export { AuthenticationError, AuthMiddleware, createAuthMiddleware } from './auth/middleware';
-export { UserRole, JwtPayload, AuthenticatedUser, AuthTokens, SiriuxConfig } from './types';
+// Re-export mock database functionality
+export { 
+  MockDatabase,
+  MockUser,
+  MockSession
+} from './mock/mockDatabase';
+export {
+  MockDatabaseFactory,
+  DatabaseType
+} from './mock/mockDatabaseFactory';
+export { InMemoryMockDatabase } from './mock/inMemoryMockDatabase';
+
+// Re-export Snowflake database
+export {
+  SnowflakeDatabase,
+  getSnowflakeConfig
+} from './databases/snowflakeDatabase';
 
 // Version information
 export const SIRIUX_CORE_VERSION = '1.0.0';
@@ -25,7 +38,9 @@ export const createDefaultConfig = (overrides: Partial<SiriuxConfig>): SiriuxCon
       mfa: false,
       sso: false,
       rbac: true,
-      emailVerification: true
+      emailVerification: true,
+      auditLogging: false,
+      analytics: false
     }
   };
 

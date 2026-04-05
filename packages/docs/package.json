@@ -1,0 +1,35 @@
+{
+  "name": "@siriux/docs",
+  "version": "1.0.0",
+  "description": "Siriux Documentation - Complete guides and API documentation",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "dev": "vitepress dev",
+    "build": "vitepress build",
+    "preview": "vitepress preview",
+    "serve": "vitepress serve"
+  },
+  "keywords": [
+    "siriux",
+    "documentation",
+    "docs",
+    "vitepress",
+    "guides",
+    "api"
+  ],
+  "author": "jawwad@alsirius.co.uk",
+  "license": "MIT",
+  "devDependencies": {
+    "vitepress": "^1.0.0-rc.40",
+    "vue": "^3.4.21",
+    "@types/node": "^20.11.24"
+  },
+  "files": [
+    "docs/**/*",
+    "*.md"
+  ],
+  "publishConfig": {
+    "access": "public"
+  }
+}

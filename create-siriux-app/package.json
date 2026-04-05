@@ -1,0 +1,57 @@
+{
+  "name": "create-siriux-app",
+  "version": "1.0.0",
+  "description": "Create Siriux SaaS applications with one command",
+  "main": "dist/index.js",
+  "type": "module",
+  "types": "dist/index.d.ts",
+  "bin": {
+    "create-siriux-app": "dist/cli.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "test": "jest",
+    "clean": "rm -rf dist",
+    "prepublishOnly": "npm run clean && npm run build"
+  },
+  "keywords": [
+    "siriux",
+    "cli",
+    "scaffold",
+    "generator",
+    "saas",
+    "mvp",
+    "starter-kit"
+  ],
+  "author": "jawwad@alsirius.co.uk",
+  "license": "MIT",
+  "dependencies": {
+    "commander": "^11.1.0",
+    "inquirer": "^9.2.11",
+    "chalk": "^5.3.0",
+    "ora": "^7.0.1",
+    "fs-extra": "^11.1.1",
+    "template-string": "^1.0.0",
+    "validate-npm-package-name": "^5.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.5",
+    "@types/inquirer": "^9.0.6",
+    "@types/fs-extra": "^11.0.1",
+    "@types/validate-npm-package-name": "^4.0.2",
+    "typescript": "^5.3.3",
+    "jest": "^29.7.0",
+    "@types/jest": "^29.5.8"
+  },
+  "files": [
+    "dist/**/*",
+    "templates/**/*"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  }
+}

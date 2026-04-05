@@ -31,8 +31,40 @@ const auth = createAuthMiddleware(config);
 app.use('/api/protected', auth.tokenAuth);
 ```
 
-### @siriux/ui *(Coming Soon)*
-React components and UI utilities for modern web interfaces.
+### @siriux/ui
+Complete React component library with authentication and UI components built with Radix UI and Tailwind CSS.
+
+**Features:**
+- Authentication components (LoginForm, RegisterForm, ForgotPasswordForm)
+- Auth context and hooks for state management
+- Layout components (Header, Sidebar, Footer)
+- UI components (Button, Input, Card, Badge, Modal, Navigation)
+- Hybrid Icon system with 500+ Lucide icons + custom SVG support
+- Radix UI for accessibility
+- Storybook integration
+- TypeScript support
+
+**Installation:**
+```bash
+npm install @siriux/ui
+```
+
+**Usage:**
+```typescript
+import { AuthProvider, LoginForm, Icon } from '@siriux/ui';
+
+function App() {
+  return (
+    <AuthProvider>
+      <div>
+        <LoginForm redirectTo="/dashboard" />
+        <Icon name="shield" size="lg" /> {/* Custom SVG */}
+        <Icon name="user" size="md" />    {/* Lucide icon */}
+      </div>
+    </AuthProvider>
+  );
+}
+```
 
 ### @siriux/cli *(Coming Soon)*
 Command-line tool for scaffolding new SaaS projects.
@@ -46,9 +78,16 @@ Premium features and enterprise components.
 siriux-monorepo/
 ├── packages/
 │   ├── core/         # Authentication and API utilities
-│   ├── ui/           # React components
-│   ├── cli/          # Project scaffolding
-│   └── pro/          # Premium features
+│   ├── auth/         # JWT authentication middleware
+│   ├── ui/           # React component library
+│   ├── access-control/ # RBAC and security guards
+│   ├── logging/      # Structured logging with correlation IDs
+│   ├── config/       # Environment validation and management
+│   ├── docs/         # Documentation site
+│   └── ui-starter/   # Deprecated (use @siriux/ui instead)
+├── apps/
+│   └── starter-next-saas/ # Dynamic SaaS starter kit
+├── create-siriux-app/ # CLI tool for project scaffolding
 ├── templates/        # Project templates
 ├── lerna.json        # Monorepo configuration
 └── package.json      # Root configuration

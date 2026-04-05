@@ -11,12 +11,20 @@
     "build": "lerna run build",
     "test": "lerna run test",
     "publish": "lerna publish",
-    "dev": "lerna run dev --parallel"
+    "dev": "lerna run dev --parallel",
+    "dev:all": "concurrently \"npm run dev\" \"npm run dev --workspace=@siriux/docs\"",
+    "start": "npm run dev:all"
   },
   "devDependencies": {
+    "concurrently": "^9.2.1",
     "lerna": "^9.0.7"
   },
-  "keywords": ["siriux", "monorepo", "saas", "starter-kit"],
+  "keywords": [
+    "siriux",
+    "monorepo",
+    "saas",
+    "starter-kit"
+  ],
   "author": "jawwad@alsirius.co.uk",
   "license": "MIT",
   "description": "Siriux SaaS Starter Kit Monorepo"
