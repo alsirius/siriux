@@ -1,6 +1,6 @@
 {
   "name": "@siriux/config",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Siriux Configuration - Environment variables management and validation",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

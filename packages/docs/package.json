@@ -1,6 +1,6 @@
 {
   "name": "@siriux/docs",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Siriux Documentation - Complete guides and API documentation",
   "main": "index.js",
   "type": "module",

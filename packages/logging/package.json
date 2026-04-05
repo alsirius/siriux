@@ -1,6 +1,6 @@
 {
   "name": "@siriux/logging",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Siriux Logging - Structured logging with correlation IDs and multiple transports",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
