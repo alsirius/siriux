@@ -3,12 +3,16 @@
 import { useState, useEffect } from 'react';
 import { MockDatabaseFactory, DatabaseType } from '@siriux/core';
 
-export default function DatabaseDemoPage() {
+// Disable this page during build/SSR to avoid React context issues
+const DatabaseDemoPage = () => {
   const [selectedDb, setSelectedDb] = useState<DatabaseType>(DatabaseType.SNOWFLAKE_REAL);
   const [logs, setLogs] = useState<string[]>([]);
   const [stats, setStats] = useState<any>({});
   const [isLoading, setIsLoading] = useState(false);
   const [dbInstance, setDbInstance] = useState<any>(null);
+
+  // Type guard for database instance
+  const getDb = () => dbInstance;
 
   const addLog = (message: string) => {
     const timestamp = new Date().toLocaleTimeString();
@@ -23,7 +27,7 @@ export default function DatabaseDemoPage() {
       const db = await MockDatabaseFactory.create({ type: selectedDb });
       setDbInstance(db);
       
-      await db.initialize();
+      await getDb().initialize();
       addLog(`✅ ${selectedDb} database initialized successfully`);
       
       // Verify if this is real Snowflake connection
@@ -39,7 +43,7 @@ export default function DatabaseDemoPage() {
         addLog('🎭 Using mock database for demo');
       }
       
-      const dbStats = await db.getStats();
+      const dbStats = await dbInstance.getStats();
       setStats(dbStats);
       addLog(`📊 Database stats retrieved`);
       
@@ -65,11 +69,11 @@ export default function DatabaseDemoPage() {
         role: 'user'
       };
       
-      const createdUser = await db.createUser(testUser);
+      const createdUser = await dbInstance.createUser(testUser);
       addLog(`✅ Created user: ${createdUser.email}`);
       
       // Test retrieving user
-      const retrievedUser = await db.getUserByEmail('test@example.com');
+      const retrievedUser = await dbInstance.getUserByEmail('test@example.com');
       addLog(`✅ Retrieved user: ${retrievedUser?.email}`);
       
       // Test creating a session
@@ -80,15 +84,15 @@ export default function DatabaseDemoPage() {
         expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString()
       };
       
-      const createdSession = await db.createSession(testSession);
-      addLog(`✅ Created session for user: ${testSession.userId}`);
+      const createdSession = await dbInstance.createSession(testSession);
+      addLog(`✅ Created session for user: ${createdSession.userId}`);
       
       // Test retrieving session
-      const retrievedSession = await db.getSessionByToken('test-access-token');
+      const retrievedSession = await dbInstance.getSessionByToken('test-access-token');
       addLog(`✅ Retrieved session: ${retrievedSession?.id}`);
       
       // Test deleting session
-      await db.deleteSession('test-access-token');
+      await dbInstance.deleteSession('test-access-token');
       addLog('✅ Deleted session');
       
       addLog('🧪 User operations test completed');
@@ -105,14 +109,14 @@ export default function DatabaseDemoPage() {
       addLog('📋 Testing audit logging...');
       
       // Test audit logging
-      await db.logAudit({
+      await dbInstance.logAudit({
         userId: 'test-user-id',
         action: 'LOGIN',
         resource: 'database-demo',
         metadata: 'Test login from demo page'
       });
       
-      await db.logAudit({
+      await dbInstance.logAudit({
         userId: 'test-user-id',
         action: 'LOGOUT',
         resource: 'database-demo',
@@ -120,7 +124,7 @@ export default function DatabaseDemoPage() {
       });
       
       // Retrieve audit logs
-      const auditLogs = await db.getAuditLogs();
+      const auditLogs = await dbInstance.getAuditLogs();
       addLog(`✅ Retrieved ${auditLogs.length} audit logs`);
       
       addLog('📋 Audit logging test completed');
@@ -136,7 +140,7 @@ export default function DatabaseDemoPage() {
     try {
       addLog('📊 Retrieving database statistics...');
       
-      const dbStats = await db.getStats();
+      const dbStats = await dbInstance.getStats();
       setStats(dbStats);
       addLog(`📊 Database stats: ${JSON.stringify(dbStats, null, 2)}`);
       
@@ -313,4 +317,6 @@ export default function DatabaseDemoPage() {
       </div>
     </div>
   );
-}
+};
+
+export default DatabaseDemoPage;

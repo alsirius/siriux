@@ -5,7 +5,14 @@ const nextConfig = {
     config.resolve.fallback = {
       fs: false,
       net: false,
-      child_process: false
+      child_process: false,
+      tls: false,
+      'node:buffer': false,
+      'node:perf_hooks': false,
+      'node:child_process': false
+    };
+    config.externals = {
+      'snowflake-sdk': 'commonjs snowflake-sdk'
     };
     return config;
   }

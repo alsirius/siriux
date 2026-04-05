@@ -1,6 +1,6 @@
 {
   "name": "@siriux/config",
-  "version": "1.0.2",
+  "version": "1.0.0",
   "description": "Siriux Configuration - Environment variables management and validation",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -39,5 +39,5 @@
   "publishConfig": {
     "access": "public"
   },
-  "gitHead": "8e35df7cde5954f68c605efb2add541f9b45f736"
+  "gitHead": "7a9592f8e9ed3f1301046046e1e05811cecc24be"
 }
