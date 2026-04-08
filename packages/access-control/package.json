@@ -1,6 +1,6 @@
 {
   "name": "@siriux/access-control",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Siriux Access Control - Role-based access control, permissions, and policies",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -22,7 +22,7 @@
   "author": "jawwad@alsirius.co.uk",
   "license": "MIT",
   "dependencies": {
-    "@siriux/core": "^1.2.0",
+    "@siriux/core": "^1.2.1",
     "joi": "^17.13.3"
   },
   "devDependencies": {
