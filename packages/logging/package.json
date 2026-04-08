@@ -1,6 +1,6 @@
 {
   "name": "@siriux/logging",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Siriux Logging - Structured logging with correlation IDs and multiple transports",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -21,7 +21,7 @@
   "author": "jawwad@alsirius.co.uk",
   "license": "MIT",
   "dependencies": {
-    "@siriux/core": "^1.1.0",
+    "@siriux/core": "^1.2.0",
     "uuid": "^10.0.0",
     "winston": "^3.13.1",
     "winston-daily-rotate-file": "^5.0.0"
