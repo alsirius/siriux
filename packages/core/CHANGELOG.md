@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.3.0](https://github.com/alsirius/siriux/compare/@siriux/core@1.2.1...@siriux/core@1.3.0) (2026-04-08)
+
+
+### Bug Fixes
+
+* Update all @siriux/core dependencies to 1.0.0 ([5c7c037](https://github.com/alsirius/siriux/commit/5c7c0379234de52dfa92136e093f226c045ccfaf))
+
+
+### Features
+
+* Reset all packages to version 1.0.0 for clean publishing ([0ffaa12](https://github.com/alsirius/siriux/commit/0ffaa12e782a15ccc5257ad6d531d1fbed7d6c4c))
+
+
+
+
+
 # [1.2.0](https://github.com/alsirius/siriux/compare/@siriux/core@1.2.1...@siriux/core@1.2.0) (2026-04-08)
 
 
