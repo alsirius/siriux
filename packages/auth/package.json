@@ -1,6 +1,6 @@
 {
   "name": "@siriux/auth",
-  "version": "1.0.1",
+  "version": "0.0.1",
   "description": "Siriux Authentication - JWT authentication and session management",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -15,10 +15,8 @@
     "siriux",
     "authentication",
     "jwt",
-    "express",
     "session",
-    "login",
-    "register"
+    "security"
   ],
   "author": "jawwad@alsirius.co.uk",
   "license": "MIT",
@@ -48,6 +46,5 @@
   ],
   "publishConfig": {
     "access": "public"
-  },
-  "gitHead": "7a9592f8e9ed3f1301046046e1e05811cecc24be"
+  }
 }

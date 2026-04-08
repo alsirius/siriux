@@ -2,7 +2,10 @@
 
 import { appConfig } from '../../config/app-config';
 import FeatureDemo from '../components/FeatureDemo';
-import { Icon } from '@siriux/ui';
+import { LocalIcon } from '../components/LocalIcon';
+
+// Force dynamic rendering to avoid SSR issues
+export const dynamic = 'force-dynamic';
 
 export default function HomePage() {
   const { app, theme, content } = appConfig;
@@ -34,14 +37,14 @@ export default function HomePage() {
                 className="bg-gray-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-gray-700 transition-colors flex items-center space-x-2"
                 onClick={() => window.open(app.docsUrl || 'https://docs.siriux.dev', '_blank')}
               >
-                <Icon name="book-open" size="sm" />
+                <LocalIcon name="book-open" size="sm" />
                 <span>View Docs</span>
               </button>
               <button 
                 className="bg-purple-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-purple-700 transition-colors flex items-center space-x-2"
                 onClick={() => window.location.href = '/database-demo'}
               >
-                <Icon name="database" size="sm" />
+                <LocalIcon name="database" size="sm" />
                 <span>Database Demo</span>
               </button>
             </div>
@@ -64,7 +67,7 @@ export default function HomePage() {
           {content.services.items.map((service, index) => (
             <div key={index} className="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow">
               <div className="text-2xl mb-4">
-                <Icon name={service.icon} />
+                <LocalIcon name={service.icon} />
               </div>
               <h3 className="text-xl font-semibold text-gray-900 mb-2">
                 {service.title}

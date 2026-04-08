@@ -16,9 +16,15 @@ export default [
     },
     external,
     plugins: [
-      resolve(),
+      resolve({
+        preferBuiltins: false,
+        browser: true,
+      }),
       commonjs(),
-      typescript({ tsconfig: './tsconfig.json' }),
+      typescript({ 
+        tsconfig: './tsconfig.json',
+        declaration: false, // Skip declarations in ESM build
+      }),
     ],
   },
   // CommonJS build
@@ -32,12 +38,18 @@ export default [
     },
     external,
     plugins: [
-      resolve(),
+      resolve({
+        preferBuiltins: false,
+        browser: true,
+      }),
       commonjs(),
-      typescript({ tsconfig: './tsconfig.json' }),
+      typescript({ 
+        tsconfig: './tsconfig.json',
+        declaration: false, // Skip declarations in CJS build
+      }),
     ],
   },
-  // Type definitions
+  // Type definitions (separate build)
   {
     input: 'src/index.ts',
     output: {
@@ -45,6 +57,17 @@ export default [
       format: 'esm',
     },
     external,
-    plugins: [dts()],
+    plugins: [
+      resolve({
+        preferBuiltins: false,
+        browser: true,
+      }),
+      dts({
+        tsconfig: './tsconfig.json',
+        compilerOptions: {
+          skipLibCheck: true,
+        },
+      }),
+    ],
   },
 ];

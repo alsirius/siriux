@@ -2,13 +2,30 @@
 
 import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 
+// Global SSR-safe useContext wrapper
+const safeUseContext = <T,>(context: React.Context<T | undefined>): T => {
+  // Check if we're in a browser environment
+  if (typeof window === 'undefined') {
+    // During SSR, return default values
+    return defaultAuthContext as T;
+  }
+  
+  const contextValue = useContext(context);
+  if (contextValue === undefined) {
+    // If context is undefined, return default values instead of throwing error
+    return defaultAuthContext as T;
+  }
+  return contextValue;
+};
+
 export interface User {
   id: string;
   email: string;
-  firstName?: string;
-  lastName?: string;
-  role: 'user' | 'admin';
-  avatar?: string;
+  firstName: string;
+  lastName: string;
+  role: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface AuthTokens {
@@ -32,10 +49,26 @@ export interface AuthContextType {
 export interface RegisterData {
   email: string;
   password: string;
-  firstName?: string;
-  lastName?: string;
+  confirmPassword: string;
+  firstName: string;
+  lastName: string;
 }
 
+// Create a default context value for SSR
+const defaultAuthContext: AuthContextType = {
+  user: null,
+  tokens: null,
+  isAuthenticated: false,
+  isLoading: false,
+  loading: false,
+  login: async () => {},
+  register: async () => {},
+  logout: () => {},
+  refreshToken: async () => {},
+  updateProfile: async () => {}
+};
+
+// Only create context on client side
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export interface AuthProviderProps {
@@ -52,6 +85,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
   const [user, setUser] = useState<User | null>(null);
   const [tokens, setTokens] = useState<AuthTokens | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   const isAuthenticated = !!user && !!tokens;
 
@@ -64,34 +98,24 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
       try {
         const parsedTokens = JSON.parse(storedTokens);
         const parsedUser = JSON.parse(storedUser);
-        setTokens(parsedTokens);
-        setUser(parsedUser);
+        
+        // Check if tokens are still valid
+        if (parsedTokens.accessToken) {
+          setTokens(parsedTokens);
+          setUser(parsedUser);
+        }
       } catch (error) {
-        console.error('Failed to parse stored auth data:', error);
-        clearAuthData();
+        console.error('Error parsing stored auth data:', error);
+        localStorage.removeItem('siriux_tokens');
+        localStorage.removeItem('siriux_user');
       }
     }
+    
     setIsLoading(false);
   }, []);
 
-  const clearAuthData = () => {
-    setUser(null);
-    setTokens(null);
-    localStorage.removeItem('siriux_tokens');
-    localStorage.removeItem('siriux_user');
-    onAuthChange?.(null);
-  };
-
-  const storeAuthData = (userData: User, tokenData: AuthTokens) => {
-    setUser(userData);
-    setTokens(tokenData);
-    localStorage.setItem('siriux_tokens', JSON.stringify(tokenData));
-    localStorage.setItem('siriux_user', JSON.stringify(userData));
-    onAuthChange?.(userData);
-  };
-
-  const login = async (email: string, password: string): Promise<void> => {
-    setIsLoading(true);
+  const login = async (email: string, password: string) => {
+    setLoading(true);
     try {
       const response = await fetch(`${apiBaseUrl}/auth/login`, {
         method: 'POST',
@@ -102,32 +126,28 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
       });
 
       if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.error || 'Login failed');
+        throw new Error('Login failed');
       }
 
       const data = await response.json();
       
-      if (data.success && data.data?.user && data.data?.token) {
-        // Handle legacy single token format
-        const tokenData: AuthTokens = {
-          accessToken: data.data.token,
-          refreshToken: data.data.refreshToken || data.data.token
-        };
-        storeAuthData(data.data.user, tokenData);
-      } else {
-        throw new Error('Invalid response format');
-      }
+      setUser(data.user);
+      setTokens(data.tokens);
+      
+      localStorage.setItem('siriux_tokens', JSON.stringify(data.tokens));
+      localStorage.setItem('siriux_user', JSON.stringify(data.user));
+      
+      onAuthChange?.(data.user);
     } catch (error) {
-      clearAuthData();
+      console.error('Login error:', error);
       throw error;
     } finally {
-      setIsLoading(false);
+      setLoading(false);
     }
   };
 
-  const register = async (userData: RegisterData): Promise<void> => {
-    setIsLoading(true);
+  const register = async (userData: RegisterData) => {
+    setLoading(true);
     try {
       const response = await fetch(`${apiBaseUrl}/auth/register`, {
         method: 'POST',
@@ -138,34 +158,35 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
       });
 
       if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.error || 'Registration failed');
+        throw new Error('Registration failed');
       }
 
       const data = await response.json();
       
-      if (data.success && data.data?.user && data.data?.token) {
-        const tokenData: AuthTokens = {
-          accessToken: data.data.token,
-          refreshToken: data.data.refreshToken || data.data.token
-        };
-        storeAuthData(data.data.user, tokenData);
-      } else {
-        throw new Error('Invalid response format');
-      }
+      setUser(data.user);
+      setTokens(data.tokens);
+      
+      localStorage.setItem('siriux_tokens', JSON.stringify(data.tokens));
+      localStorage.setItem('siriux_user', JSON.stringify(data.user));
+      
+      onAuthChange?.(data.user);
     } catch (error) {
-      clearAuthData();
+      console.error('Registration error:', error);
       throw error;
     } finally {
-      setIsLoading(false);
+      setLoading(false);
     }
   };
 
-  const logout = (): void => {
-    clearAuthData();
+  const logout = () => {
+    setUser(null);
+    setTokens(null);
+    localStorage.removeItem('siriux_tokens');
+    localStorage.removeItem('siriux_user');
+    onAuthChange?.(null);
   };
 
-  const refreshToken = async (): Promise<void> => {
+  const refreshToken = async () => {
     if (!tokens?.refreshToken) {
       throw new Error('No refresh token available');
     }
@@ -185,54 +206,48 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
 
       const data = await response.json();
       
-      if (data.success && data.data?.token) {
-        const newTokens: AuthTokens = {
-          accessToken: data.data.token,
-          refreshToken: data.data.refreshToken || tokens.refreshToken
-        };
-        setTokens(newTokens);
-        localStorage.setItem('siriux_tokens', JSON.stringify(newTokens));
-      } else {
-        throw new Error('Invalid refresh response');
-      }
+      setTokens(data.tokens);
+      localStorage.setItem('siriux_tokens', JSON.stringify(data.tokens));
+      
+      return data.tokens;
     } catch (error) {
-      clearAuthData();
+      console.error('Token refresh error:', error);
+      logout();
       throw error;
     }
   };
 
-  const updateProfile = async (userData: Partial<User>): Promise<void> => {
-    if (!user || !tokens) {
-      throw new Error('Not authenticated');
+  const updateProfile = async (userData: Partial<User>) => {
+    if (!user) {
+      throw new Error('No user logged in');
     }
 
+    setLoading(true);
     try {
-      const response = await fetch(`${apiBaseUrl}/users/profile`, {
+      const response = await fetch(`${apiBaseUrl}/auth/profile`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${tokens.accessToken}`,
+          'Authorization': `Bearer ${tokens?.accessToken}`,
         },
         body: JSON.stringify(userData),
       });
 
       if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.error || 'Profile update failed');
+        throw new Error('Profile update failed');
       }
 
-      const data = await response.json();
+      const updatedUser = await response.json();
       
-      if (data.success && data.data?.user) {
-        const updatedUser = { ...user, ...data.data.user };
-        setUser(updatedUser);
-        localStorage.setItem('siriux_user', JSON.stringify(updatedUser));
-        onAuthChange?.(updatedUser);
-      } else {
-        throw new Error('Invalid response format');
-      }
+      setUser(updatedUser);
+      localStorage.setItem('siriux_user', JSON.stringify(updatedUser));
+      
+      onAuthChange?.(updatedUser);
     } catch (error) {
+      console.error('Profile update error:', error);
       throw error;
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -241,7 +256,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
     tokens,
     isAuthenticated,
     isLoading,
-    loading: false,
+    loading,
     login,
     register,
     logout,
@@ -252,10 +267,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
 
+// Export the safe useContext wrapper
 export const useAuth = (): AuthContextType => {
-  const context = useContext(AuthContext);
-  if (context === undefined) {
-    throw new Error('useAuth must be used within an AuthProvider');
-  }
-  return context;
+  return safeUseContext(AuthContext);
 };

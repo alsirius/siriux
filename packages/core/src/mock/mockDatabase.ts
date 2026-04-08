@@ -20,10 +20,57 @@ export interface MockSession {
   createdAt: string;
 }
 
-export class MockDatabase {
-  private users: Map<string, MockUser> = new Map();
-  private sessions: Map<string, MockSession> = new Map();
-  private auditLogs: any[] = [];
+export interface MockAuditLog {
+  id: string;
+  userId?: string;
+  action: string;
+  resource: string;
+  metadata?: string;
+  timestamp: string;
+}
+
+// Interface for all mock databases
+export interface IMockDatabase {
+  users: Map<string, MockUser>;
+  sessions: Map<string, MockSession>;
+  auditLogs: MockAuditLog[];
+  initialize(): Promise<void>;
+  createTables(): Promise<void>;
+  getUserByEmail(email: string): Promise<MockUser | null>;
+  getUserById(id: string): Promise<MockUser | null>;
+  createUser(userData: Omit<MockUser, 'id' | 'createdAt' | 'updatedAt'>): Promise<MockUser>;
+  updateUser(id: string, updates: Partial<MockUser>): Promise<MockUser | null>;
+  createSession(sessionData: Omit<MockSession, 'id' | 'createdAt'>): Promise<MockSession>;
+  getSessionByToken(accessToken: string): Promise<MockSession | null>;
+  getSessionById(id: string): Promise<MockSession | null>;
+  deleteSession(accessToken: string): Promise<void>;
+  deleteExpiredSessions(): Promise<void>;
+  logAudit(entry: {
+    userId?: string;
+    action: string;
+    resource: string;
+    metadata?: string;
+  }): Promise<void>;
+  getAuditLogs(userId?: string, limit?: number): Promise<MockAuditLog[]>;
+  searchUsers(query: string): Promise<MockUser[]>;
+  getUsersByRole(role: string): Promise<MockUser[]>;
+  getStats(): Promise<{
+    totalUsers: number;
+    totalSessions: number;
+    totalAuditLogs: number;
+    usersByRole: { [key: string]: number };
+    databaseType: string;
+    connectionStatus: string;
+  }>;
+  close(): Promise<void>;
+  healthCheck(): Promise<{ status: string; timestamp: string; databaseType: string }>;
+  reset(): Promise<void>;
+}
+
+export class MockDatabase implements IMockDatabase {
+  public users: Map<string, MockUser> = new Map();
+  public sessions: Map<string, MockSession> = new Map();
+  public auditLogs: MockAuditLog[] = [];
   private isInitialized = false;
 
   async initialize(): Promise<void> {
@@ -39,9 +86,9 @@ export class MockDatabase {
     }
   }
 
-  private async createTables(): Promise<void> {
+  async createTables(): Promise<void> {
     // In-memory tables are created by the data structure
-    console.log('🗄️  Creating in-memory tables...');
+    console.log('??  Creating in-memory tables...');
   }
 
   private async seedData(): Promise<void> {
@@ -187,5 +234,92 @@ export class MockDatabase {
       timestamp: new Date().toISOString(),
       databaseType: 'in-memory'
     };
+  }
+
+  async updateUser(id: string, updates: Partial<MockUser>): Promise<MockUser | null> {
+    for (const [email, user] of this.users.entries()) {
+      if (user.id === id) {
+        const updatedUser = { ...user, ...updates, updatedAt: new Date().toISOString() };
+        this.users.set(email, updatedUser);
+        return updatedUser;
+      }
+    }
+    return null;
+  }
+
+  async getSessionById(id: string): Promise<MockSession | null> {
+    for (const session of this.sessions.values()) {
+      if (session.id === id) {
+        return session;
+      }
+    }
+    return null;
+  }
+
+  async deleteExpiredSessions(): Promise<void> {
+    const now = new Date();
+    for (const [token, session] of this.sessions.entries()) {
+      if (new Date(session.expiresAt) <= now) {
+        this.sessions.delete(token);
+      }
+    }
+  }
+
+  async searchUsers(query: string): Promise<MockUser[]> {
+    const lowerQuery = query.toLowerCase();
+    const results: MockUser[] = [];
+    
+    for (const user of this.users.values()) {
+      if (
+        user.email.toLowerCase().includes(lowerQuery) ||
+        user.firstName.toLowerCase().includes(lowerQuery) ||
+        user.lastName.toLowerCase().includes(lowerQuery)
+      ) {
+        results.push(user);
+      }
+    }
+    
+    return results;
+  }
+
+  async getUsersByRole(role: string): Promise<MockUser[]> {
+    const results: MockUser[] = [];
+    
+    for (const user of this.users.values()) {
+      if (user.role === role) {
+        results.push(user);
+      }
+    }
+    
+    return results;
+  }
+
+  async getStats(): Promise<{
+    totalUsers: number;
+    totalSessions: number;
+    totalAuditLogs: number;
+    usersByRole: { [key: string]: number };
+    databaseType: string;
+    connectionStatus: string;
+  }> {
+    const usersByRole: { [key: string]: number } = {};
+    
+    for (const user of this.users.values()) {
+      usersByRole[user.role] = (usersByRole[user.role] || 0) + 1;
+    }
+
+    return {
+      totalUsers: this.users.size,
+      totalSessions: this.sessions.size,
+      totalAuditLogs: this.auditLogs.length,
+      usersByRole,
+      databaseType: 'in-memory',
+      connectionStatus: 'healthy'
+    };
+  }
+
+  async reset(): Promise<void> {
+    await this.close();
+    await this.initialize();
   }
 }

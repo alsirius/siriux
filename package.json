@@ -13,7 +13,9 @@
     "publish": "lerna publish",
     "dev": "lerna run dev --parallel",
     "dev:all": "concurrently \"npm run dev\" \"npm run dev --workspace=@siriux/docs\"",
-    "start": "npm run dev:all"
+    "start": "npm run dev:all",
+    "start:full": "concurrently \"npm run dev\" \"npm run dev --workspace=@siriux/docs\" \"npm run dev --workspace=@siriux/starter-next-saas\"",
+    "start:app": "npm run dev --workspace=@siriux/starter-next-saas"
   },
   "devDependencies": {
     "concurrently": "^9.2.1",

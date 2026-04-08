@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useState } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 
@@ -67,6 +69,7 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({
       await register({
         email: formData.email,
         password: formData.password,
+        confirmPassword: formData.confirmPassword,
         firstName: formData.firstName,
         lastName: formData.lastName
       });

@@ -3,9 +3,24 @@
 import { useState, useEffect } from 'react';
 import { MockDatabaseFactory, DatabaseType } from '@siriux/core';
 
+// Force dynamic rendering to avoid SSR issues
+export const dynamic = 'force-dynamic';
+
 // Disable this page during build/SSR to avoid React context issues
 const DatabaseDemoPage = () => {
-  const [selectedDb, setSelectedDb] = useState<DatabaseType>(DatabaseType.SNOWFLAKE_REAL);
+  // Read database type from URL parameter, default to SNOWFLAKE_REAL
+  const getInitialDbType = (): DatabaseType => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      const dbType = params.get('type') as DatabaseType;
+      if (dbType && MockDatabaseFactory.getSupportedTypes().includes(dbType)) {
+        return dbType;
+      }
+    }
+    return DatabaseType.SNOWFLAKE_REAL;
+  };
+
+  const [selectedDb, setSelectedDb] = useState<DatabaseType>(getInitialDbType());
   const [logs, setLogs] = useState<string[]>([]);
   const [stats, setStats] = useState<any>({});
   const [isLoading, setIsLoading] = useState(false);
@@ -312,6 +327,33 @@ const DatabaseDemoPage = () => {
                 ))}
               </div>
             )}
+          </div>
+          
+          {/* Database Info and Back Link */}
+          <div className="bg-white rounded-lg shadow-lg p-6">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-xl font-semibold">Database Configuration</h2>
+              <a
+                href="/demo"
+                className="inline-flex items-center px-3 py-1 bg-gray-600 text-white text-sm font-medium rounded hover:bg-gray-700 transition-colors"
+              >
+                <span className="mr-1">Back to Demo</span>
+              </a>
+            </div>
+            <div className="bg-blue-50 rounded-lg p-4">
+              <div className="text-sm text-blue-800">
+                <div className="font-semibold mb-2">Current Database:</div>
+                <div>
+                  <strong>{MockDatabaseFactory.getDatabaseInfo(selectedDb).name}</strong>
+                </div>
+                <div className="text-xs text-blue-600 mt-1">
+                  {MockDatabaseFactory.getDatabaseInfo(selectedDb).description}
+                </div>
+                <div className="text-xs text-blue-500 mt-2">
+                  <span className="font-medium">Use case:</span> {MockDatabaseFactory.getDatabaseInfo(selectedDb).useCase}
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>

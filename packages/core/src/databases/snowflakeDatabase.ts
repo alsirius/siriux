@@ -1,6 +1,8 @@
 // Real Snowflake Database Integration
 // Production-ready Snowflake connector for Siriux
 
+import { IMockDatabase } from '../mock/mockDatabase';
+
 export interface SnowflakeConfig {
   account: string;
   username: string;
@@ -19,7 +21,10 @@ export interface SnowflakeQueryResult {
   statementId: string;
 }
 
-export class SnowflakeDatabase {
+export class SnowflakeDatabase implements IMockDatabase {
+  public users: Map<string, any> = new Map();
+  public sessions: Map<string, any> = new Map();
+  public auditLogs: any[] = [];
   private config: SnowflakeConfig;
   private connection: any = null;
   private isConnected = false;
@@ -276,9 +281,7 @@ export class SnowflakeDatabase {
       totalAuditLogs: auditStats.rows[0].TOTAL,
       usersByRole,
       databaseType: 'snowflake',
-      warehouse: this.config.warehouse,
-      schema: this.config.schema,
-      database: this.config.database || 'SIRIUX_DEMO'
+      connectionStatus: this.isConnected ? 'healthy' : 'disconnected'
     };
   }
 
@@ -340,7 +343,7 @@ export class SnowflakeDatabase {
   // Reset demo data
   async reset(): Promise<void> {
     try {
-      console.log('🔄 Resetting Snowflake demo data...');
+      console.log('?? Resetting Snowflake demo data...');
       
       await this.execute('DELETE FROM AUDIT_LOGS');
       await this.execute('DELETE FROM SESSIONS');
@@ -348,11 +351,64 @@ export class SnowflakeDatabase {
       
       await this.seedDemoData();
       
-      console.log('✅ Snowflake demo data reset successfully');
+      console.log('?? Snowflake demo data reset successfully');
     } catch (error: any) {
-      console.error('❌ Reset failed:', error.message);
+      console.error('?? Reset failed:', error.message);
       throw error;
     }
+  }
+
+  // Additional methods required by IMockDatabase interface
+  async createTables(): Promise<void> {
+    // Tables are created in initializeSchema()
+    console.log('?? Snowflake tables already created during initialization');
+  }
+
+  async updateUser(id: string, updates: any): Promise<any> {
+    const setClause = Object.keys(updates)
+      .map(key => `${key} = ?`)
+      .join(', ');
+    const values = Object.values(updates);
+    
+    await this.execute(
+      `UPDATE USERS SET ${setClause}, UPDATED_AT = CURRENT_TIMESTAMP() WHERE ID = ?`,
+      [...values, id]
+    );
+    
+    return this.getUserById(id);
+  }
+
+  async getSessionById(id: string): Promise<any> {
+    const result = await this.execute(
+      'SELECT * FROM SESSIONS WHERE ID = ?',
+      [id]
+    );
+    
+    return result.rows.length > 0 ? result.rows[0] : null;
+  }
+
+  async deleteExpiredSessions(): Promise<void> {
+    await this.execute(
+      'DELETE FROM SESSIONS WHERE EXPIRES_AT <= CURRENT_TIMESTAMP()'
+    );
+  }
+
+  async searchUsers(query: string): Promise<any[]> {
+    const result = await this.execute(
+      `SELECT * FROM USERS WHERE EMAIL LIKE ? OR FIRST_NAME LIKE ? OR LAST_NAME LIKE ?`,
+      [`%${query}%`, `%${query}%`, `%${query}%`]
+    );
+    
+    return result.rows;
+  }
+
+  async getUsersByRole(role: string): Promise<any[]> {
+    const result = await this.execute(
+      'SELECT * FROM USERS WHERE ROLE = ?',
+      [role]
+    );
+    
+    return result.rows;
   }
 }
 

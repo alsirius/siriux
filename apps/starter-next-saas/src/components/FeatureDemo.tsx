@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { appConfig } from '../../config/app-config';
-import { Icon } from '@siriux/ui';
+import { LocalIcon } from './LocalIcon';
 
 interface FeatureDemoProps {
   feature: string;
@@ -68,7 +68,7 @@ export default function FeatureDemo({ feature, title, description }: FeatureDemo
   return (
     <div className="bg-white p-6 rounded-lg shadow-lg border border-gray-200">
       <div className="flex items-center mb-4">
-        <Icon name={feature} className="mr-2" />
+        <LocalIcon name={feature} className="mr-2" />
         <h3 className="text-xl font-semibold text-gray-900">{title}</h3>
       </div>
       <p className="text-gray-600 mb-4">{description}</p>

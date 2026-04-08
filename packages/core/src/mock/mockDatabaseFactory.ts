@@ -12,36 +12,32 @@ export interface MockDatabaseConfig {
   options?: Record<string, any>;
 }
 
-// Base interface for all mock databases
-export interface MockDatabase {
-  initialize(): Promise<void>;
-  getUserByEmail(email: string): Promise<any>;
-  getUserById(id: string): Promise<any>;
-  createUser(userData: any): Promise<any>;
-  createSession(data: any): Promise<any>;
-  getSessionByToken(token: string): Promise<any>;
-  deleteSession(token: string): Promise<void>;
-  logAudit(entry: any): Promise<void>;
-  getStats(): Promise<any>;
-  getAuditLogs(userId?: string): Promise<any[]>;
-  reset(): Promise<void>;
-  close(): Promise<void>;
-  healthCheck(): Promise<any>;
-}
+// Import the new interface
+import { IMockDatabase } from './mockDatabase';
+
+// Base interface for all mock databases (alias to IMockDatabase)
+export interface MockDatabase extends IMockDatabase {}
 
 // In-memory implementation (existing)
 import { InMemoryMockDatabase } from './inMemoryMockDatabase';
 
 // SQLite implementation (placeholder for future)
 class SQLiteMockDatabase implements MockDatabase {
+  public users: Map<string, any> = new Map();
+  public sessions: Map<string, any> = new Map();
+  public auditLogs: any[] = [];
   private db: any = null;
   private initialized = false;
 
   async initialize(): Promise<void> {
-    console.log('🗄️  Initializing SQLite mock database...');
+    console.log('??  Initializing SQLite mock database...');
     // Future: Use actual SQLite with better-sqlite3
     // For now, fall back to in-memory
     this.initialized = true;
+  }
+
+  async createTables(): Promise<void> {
+    console.log('??  Creating SQLite tables...');
   }
 
   async getUserByEmail(email: string): Promise<any> {
@@ -59,6 +55,11 @@ class SQLiteMockDatabase implements MockDatabase {
     return null;
   }
 
+  async updateUser(id: string, updates: any): Promise<any> {
+    // Placeholder implementation
+    return null;
+  }
+
   async createSession(data: any): Promise<any> {
     // Placeholder implementation
     return null;
@@ -69,12 +70,33 @@ class SQLiteMockDatabase implements MockDatabase {
     return null;
   }
 
+  async getSessionById(id: string): Promise<any> {
+    // Placeholder implementation
+    return null;
+  }
+
   async deleteSession(token: string): Promise<void> {
+    // Placeholder implementation
+  }
+
+  async deleteExpiredSessions(): Promise<void> {
     // Placeholder implementation
   }
 
   async logAudit(entry: any): Promise<void> {
     // Placeholder implementation
+  }
+
+  async getAuditLogs(userId?: string, limit?: number): Promise<any[]> {
+    return [];
+  }
+
+  async searchUsers(query: string): Promise<any[]> {
+    return [];
+  }
+
+  async getUsersByRole(role: string): Promise<any[]> {
+    return [];
   }
 
   async getStats(): Promise<any> {
@@ -83,12 +105,9 @@ class SQLiteMockDatabase implements MockDatabase {
       totalSessions: 0,
       totalAuditLogs: 0,
       usersByRole: {},
-      databaseType: 'sqlite'
+      databaseType: 'sqlite',
+      connectionStatus: 'healthy'
     };
-  }
-
-  async getAuditLogs(userId?: string): Promise<any[]> {
-    return [];
   }
 
   async reset(): Promise<void> {
@@ -112,16 +131,19 @@ class SQLiteMockDatabase implements MockDatabase {
 
 // Snowflake mock implementation (existing)
 class SnowflakeMockDatabase implements MockDatabase {
+  public users: Map<string, any> = new Map();
+  public sessions: Map<string, any> = new Map();
+  public auditLogs: any[] = [];
   private connection: any = null;
   private initialized = false;
 
   async initialize(): Promise<void> {
-    console.log('❄️  Initializing Snowflake mock database...');
+    console.log('??  Initializing Snowflake mock database...');
     
     // Simulate Snowflake connection
     this.connection = {
       execute: async (query: string) => {
-        console.log(`🔍 Snowflake Query: ${query}`);
+        console.log(`?? Snowflake Query: ${query}`);
         return {
           rows: [],
           rowCount: 0
@@ -130,6 +152,10 @@ class SnowflakeMockDatabase implements MockDatabase {
     };
     
     this.initialized = true;
+  }
+
+  async createTables(): Promise<void> {
+    console.log('??  Creating Snowflake tables...');
   }
 
   async getUserByEmail(email: string): Promise<any> {
@@ -190,6 +216,22 @@ class SnowflakeMockDatabase implements MockDatabase {
     };
   }
 
+  async updateUser(id: string, updates: any): Promise<any> {
+    const query = `UPDATE USERS SET ... WHERE ID = '${id}'`;
+    await this.connection!.execute(query);
+    
+    // Return updated user
+    const existingUser = await this.getUserById(id);
+    if (existingUser) {
+      return {
+        ...existingUser,
+        ...updates,
+        UPDATED_AT: new Date().toISOString()
+      };
+    }
+    return null;
+  }
+
   async createSession(data: any): Promise<any> {
     const query = `INSERT INTO SESSIONS (USER_ID, ACCESS_TOKEN, REFRESH_TOKEN, EXPIRES_AT) VALUES ('${data.userId}', '${data.accessToken}', '${data.refreshToken}', '${data.expiresAt}')`;
     await this.connection!.execute(query);
@@ -216,8 +258,21 @@ class SnowflakeMockDatabase implements MockDatabase {
     };
   }
 
+  async getSessionById(id: string): Promise<any> {
+    const query = `SELECT * FROM SESSIONS WHERE ID = '${id}'`;
+    await this.connection!.execute(query);
+    
+    // Mock implementation
+    return null;
+  }
+
   async deleteSession(token: string): Promise<void> {
     const query = `DELETE FROM SESSIONS WHERE ACCESS_TOKEN = '${token}'`;
+    await this.connection!.execute(query);
+  }
+
+  async deleteExpiredSessions(): Promise<void> {
+    const query = `DELETE FROM SESSIONS WHERE EXPIRES_AT <= CURRENT_TIMESTAMP()`;
     await this.connection!.execute(query);
   }
 
@@ -226,28 +281,10 @@ class SnowflakeMockDatabase implements MockDatabase {
     await this.connection!.execute(query);
   }
 
-  async getStats(): Promise<any> {
-    const query = 'SELECT COUNT(*) AS TOTAL_USERS FROM USERS';
-    await this.connection!.execute(query);
-    
-    return {
-      totalUsers: 3,
-      totalSessions: 2,
-      totalAuditLogs: 15,
-      usersByRole: {
-        admin: 1,
-        user: 1,
-        manager: 1
-      },
-      databaseType: 'snowflake',
-      warehouse: 'DEMO_WAREHOUSE',
-      schema: 'SIRIUX_DEMO'
-    };
-  }
-
-  async getAuditLogs(userId?: string): Promise<any[]> {
+  async getAuditLogs(userId?: string, limit?: number): Promise<any[]> {
     const whereClause = userId ? `WHERE USER_ID = '${userId}'` : '';
-    const query = `SELECT * FROM AUDIT_LOGS ${whereClause} ORDER BY TIMESTAMP DESC LIMIT 50`;
+    const limitClause = limit ? `LIMIT ${limit}` : 'LIMIT 50';
+    const query = `SELECT * FROM AUDIT_LOGS ${whereClause} ORDER BY TIMESTAMP DESC ${limitClause}`;
     await this.connection!.execute(query);
     
     // Mock audit logs
@@ -271,23 +308,55 @@ class SnowflakeMockDatabase implements MockDatabase {
     ];
   }
 
+  async searchUsers(query: string): Promise<any[]> {
+    const searchQuery = `SELECT * FROM USERS WHERE EMAIL LIKE '%${query}%' OR FIRST_NAME LIKE '%${query}%' OR LAST_NAME LIKE '%${query}%'`;
+    await this.connection!.execute(searchQuery);
+    
+    // Mock implementation
+    return [];
+  }
+
+  async getUsersByRole(role: string): Promise<any[]> {
+    const roleQuery = `SELECT * FROM USERS WHERE ROLE = '${role}'`;
+    await this.connection!.execute(roleQuery);
+    
+    // Mock implementation
+    return [];
+  }
+
+  async getStats(): Promise<any> {
+    const query = 'SELECT COUNT(*) AS TOTAL_USERS FROM USERS';
+    await this.connection!.execute(query);
+    
+    return {
+      totalUsers: 3,
+      totalSessions: 2,
+      totalAuditLogs: 15,
+      usersByRole: {
+        admin: 1,
+        user: 1,
+        manager: 1
+      },
+      databaseType: 'snowflake',
+      connectionStatus: 'healthy'
+    };
+  }
+
   async reset(): Promise<void> {
-    console.log('🔄 Resetting Snowflake mock database...');
+    console.log('?? Resetting Snowflake mock database...');
     await this.initialize();
   }
 
   async close(): Promise<void> {
     this.connection = null;
     this.initialized = false;
-    console.log('❄️  Snowflake mock database closed');
+    console.log('?? Snowflake mock database closed');
   }
 
   async healthCheck(): Promise<any> {
     return {
       status: 'healthy',
       databaseType: 'snowflake',
-      warehouse: 'DEMO_WAREHOUSE',
-      schema: 'SIRIUX_DEMO',
       timestamp: new Date().toISOString(),
       connectionState: 'connected'
     };

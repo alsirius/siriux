@@ -2,13 +2,30 @@
 
 import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 
+// Global SSR-safe useContext wrapper
+const safeUseContext = <T,>(context: React.Context<T>): T => {
+  // Check if we're in a browser environment
+  if (typeof window === 'undefined') {
+    // During SSR, return default values
+    return defaultAuthContext as T;
+  }
+  
+  const contextValue = useContext(context);
+  if (contextValue === undefined || contextValue === null) {
+    // If context is undefined, return default values instead of throwing error
+    return defaultAuthContext as T;
+  }
+  return contextValue;
+};
+
 export interface User {
   id: string;
   email: string;
-  firstName?: string;
-  lastName?: string;
-  role: 'user' | 'admin' | 'manager';
-  avatar?: string;
+  firstName: string;
+  lastName: string;
+  role: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface AuthTokens {
@@ -22,40 +39,33 @@ export interface AuthContextType {
   isAuthenticated: boolean;
   isLoading: boolean;
   login: (email: string, password: string) => Promise<void>;
-  register: (userData: any) => Promise<void>;
+  register: (userData: RegisterData) => Promise<void>;
   logout: () => void;
   refreshToken: () => Promise<void>;
   updateProfile: (userData: Partial<User>) => Promise<void>;
 }
 
-// Demo users database
-const DEMO_USERS = [
-  {
-    id: '1',
-    email: 'admin@siriux.dev',
-    password: 'admin123',
-    firstName: 'Admin',
-    lastName: 'User',
-    role: 'admin' as const
-  },
-  {
-    id: '2',
-    email: 'user@siriux.dev',
-    password: 'user123',
-    firstName: 'Demo',
-    lastName: 'User',
-    role: 'user' as const
-  },
-  {
-    id: '3',
-    email: 'manager@siriux.dev',
-    password: 'manager123',
-    firstName: 'Manager',
-    lastName: 'User',
-    role: 'manager' as const
-  }
-];
+export interface RegisterData {
+  email: string;
+  password: string;
+  firstName: string;
+  lastName: string;
+}
 
+// Create a default context value for SSR
+const defaultAuthContext: AuthContextType = {
+  user: null,
+  tokens: null,
+  isAuthenticated: false,
+  isLoading: false,
+  login: async () => {},
+  register: async () => {},
+  logout: () => {},
+  refreshToken: async () => {},
+  updateProfile: async () => {}
+};
+
+// Only create context on client side
 const AuthContext = createContext<AuthContextType>({} as AuthContextType);
 
 export const DemoAuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
@@ -65,79 +75,101 @@ export const DemoAuthProvider: React.FC<{ children: ReactNode }> = ({ children }
 
   const isAuthenticated = !!user;
 
-  // Generate mock tokens
-  const generateTokens = (userData: User): AuthTokens => ({
-    accessToken: `mock_access_token_${userData.id}_${Date.now()}`,
-    refreshToken: `mock_refresh_token_${userData.id}_${Date.now()}`
-  });
-
-  const login = async (email: string, password: string): Promise<void> => {
-    setIsLoading(true);
-    
-    try {
-      // Simulate API delay
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // Find user in demo database
-      const demoUser = DEMO_USERS.find(u => u.email === email && u.password === password);
-      
-      if (!demoUser) {
-        throw new Error('Invalid credentials. Please check your email and password.');
-      }
-      
-      const userData: User = {
-        id: demoUser.id,
-        email: demoUser.email,
-        firstName: demoUser.firstName,
-        lastName: demoUser.lastName,
-        role: demoUser.role
-      };
-      
-      const tokenData = generateTokens(userData);
-      
-      setUser(userData);
-      setTokens(tokenData);
-      
-      // Store in localStorage for persistence
-      localStorage.setItem('demo_tokens', JSON.stringify(tokenData));
-      localStorage.setItem('demo_user', JSON.stringify(userData));
-      
-    } catch (error) {
-      throw error;
-    } finally {
-      setIsLoading(false);
-    }
+  const generateTokens = (userId: string): AuthTokens => {
+    return {
+      accessToken: `demo_access_${userId}_${Date.now()}`,
+      refreshToken: `demo_refresh_${userId}_${Date.now()}`,
+    };
   };
 
-  const register = async (userData: any): Promise<void> => {
+  const login = async (email: string, password: string) => {
     setIsLoading(true);
     
-    try {
-      // Simulate API delay
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // For demo, just create a new user
-      const newUser: User = {
-        id: Date.now().toString(),
-        email: userData.email,
-        firstName: userData.firstName,
-        lastName: userData.lastName,
-        role: 'user'
+    // Simulate API delay
+    await new Promise(resolve => setTimeout(resolve, 500));
+    
+    // Demo users
+    const demoUsers: User[] = [
+      {
+        id: '1',
+        email: 'admin@siriux.dev',
+        firstName: 'Admin',
+        lastName: 'User',
+        role: 'admin',
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      },
+      {
+        id: '2',
+        email: 'user@siriux.dev',
+        firstName: 'Demo',
+        lastName: 'User',
+        role: 'user',
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      },
+      {
+        id: '3',
+        email: 'manager@siriux.dev',
+        firstName: 'Manager',
+        lastName: 'User',
+        role: 'manager',
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      }
+    ];
+
+    const foundUser = demoUsers.find(u => u.email === email);
+    
+    if (foundUser) {
+      // Check password (hardcoded for demo)
+      const validPasswords: Record<string, string> = {
+        'admin@siriux.dev': 'admin123',
+        'user@siriux.dev': 'user123',
+        'manager@siriux.dev': 'manager123'
       };
       
-      const tokenData = generateTokens(newUser);
+      if (validPasswords[email] !== password) {
+        throw new Error('Invalid credentials');
+      }
+      const userTokens = generateTokens(foundUser.id);
+      setUser(foundUser);
+      setTokens(userTokens);
       
-      setUser(newUser);
-      setTokens(tokenData);
-      
-      localStorage.setItem('demo_tokens', JSON.stringify(tokenData));
-      localStorage.setItem('demo_user', JSON.stringify(newUser));
-      
-    } catch (error) {
-      throw error;
-    } finally {
-      setIsLoading(false);
+      // Store in localStorage for persistence
+      localStorage.setItem('demo_tokens', JSON.stringify(userTokens));
+      localStorage.setItem('demo_user', JSON.stringify(foundUser));
+    } else {
+      throw new Error('Invalid credentials');
     }
+    
+    setIsLoading(false);
+  };
+
+  const register = async (userData: RegisterData) => {
+    setIsLoading(true);
+    
+    // Simulate API delay
+    await new Promise(resolve => setTimeout(resolve, 500));
+    
+    // Create new user
+    const newUser: User = {
+      id: Date.now().toString(),
+      ...userData,
+      role: 'user',
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    };
+
+    const userTokens = generateTokens(newUser.id);
+    setUser(newUser);
+    setTokens(userTokens);
+    
+    // Store in localStorage
+    localStorage.setItem('demo_tokens', JSON.stringify(userTokens));
+    localStorage.setItem('demo_user', JSON.stringify(newUser));
+    
+    setIsLoading(false);
   };
 
   const logout = () => {
@@ -148,39 +180,29 @@ export const DemoAuthProvider: React.FC<{ children: ReactNode }> = ({ children }
   };
 
   const refreshToken = async (): Promise<void> => {
-    if (!user) return;
-    
-    setIsLoading(true);
-    try {
-      // Simulate API delay
-      await new Promise(resolve => setTimeout(resolve, 500));
-      
-      const tokenData = generateTokens(user);
-      setTokens(tokenData);
-      localStorage.setItem('demo_tokens', JSON.stringify(tokenData));
-    } catch (error) {
-      logout();
-    } finally {
-      setIsLoading(false);
+    if (!user) {
+      throw new Error('No user logged in');
     }
+
+    // Simulate token refresh
+    await new Promise(resolve => setTimeout(resolve, 300));
+    
+    const newTokens = generateTokens(user.id);
+    setTokens(newTokens);
+    localStorage.setItem('demo_tokens', JSON.stringify(newTokens));
   };
 
   const updateProfile = async (userData: Partial<User>): Promise<void> => {
-    if (!user) return;
-    
-    setIsLoading(true);
-    try {
-      // Simulate API delay
-      await new Promise(resolve => setTimeout(resolve, 500));
-      
-      const updatedUser = { ...user, ...userData };
-      setUser(updatedUser);
-      localStorage.setItem('demo_user', JSON.stringify(updatedUser));
-    } catch (error) {
-      throw error;
-    } finally {
-      setIsLoading(false);
+    if (!user) {
+      throw new Error('No user logged in');
     }
+
+    // Simulate API delay
+    await new Promise(resolve => setTimeout(resolve, 500));
+    
+    const updatedUser = { ...user, ...userData, updatedAt: new Date().toISOString() };
+    setUser(updatedUser);
+    localStorage.setItem('demo_user', JSON.stringify(updatedUser));
   };
 
   // Check for stored auth data on mount
@@ -190,10 +212,13 @@ export const DemoAuthProvider: React.FC<{ children: ReactNode }> = ({ children }
     
     if (storedTokens && storedUser) {
       try {
-        setTokens(JSON.parse(storedTokens));
-        setUser(JSON.parse(storedUser));
+        const parsedTokens = JSON.parse(storedTokens);
+        const parsedUser = JSON.parse(storedUser);
+        
+        setTokens(parsedTokens);
+        setUser(parsedUser);
       } catch (error) {
-        // Clear invalid stored data
+        console.error('Error parsing stored auth data:', error);
         localStorage.removeItem('demo_tokens');
         localStorage.removeItem('demo_user');
       }
@@ -209,20 +234,13 @@ export const DemoAuthProvider: React.FC<{ children: ReactNode }> = ({ children }
     register,
     logout,
     refreshToken,
-    updateProfile
+    updateProfile,
   };
 
-  return (
-    <AuthContext.Provider value={value}>
-      {children}
-    </AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
 
+// Export the safe useContext wrapper
 export const useDemoAuth = (): AuthContextType => {
-  const context = useContext(AuthContext);
-  if (context === undefined) {
-    throw new Error('useDemoAuth must be used within a DemoAuthProvider');
-  }
-  return context;
+  return safeUseContext(AuthContext);
 };

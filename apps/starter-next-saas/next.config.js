@@ -15,6 +15,18 @@ const nextConfig = {
       'snowflake-sdk': 'commonjs snowflake-sdk'
     };
     return config;
+  },
+  // Force client-side rendering
+  output: 'export',
+  trailingSlash: true,
+  skipTrailingSlashRedirect: true,
+  distDir: 'out',
+  images: {
+    unoptimized: true
+  },
+  // Disable all SSR features
+  experimental: {
+    ssr: false
   }
 };
 

@@ -1,51 +1,31 @@
 // In-memory mock database - no external dependencies required
 
-export interface MockUser {
-  id: string;
-  email: string;
-  password: string; // Plain text for demo (in production, use bcrypt)
-  firstName: string;
-  lastName: string;
-  role: 'user' | 'admin' | 'manager';
-  createdAt: string;
-  updatedAt: string;
-}
+import { IMockDatabase, MockUser, MockSession, MockAuditLog } from './mockDatabase';
 
-export interface MockSession {
-  id: string;
-  userId: string;
-  accessToken: string;
-  refreshToken: string;
-  expiresAt: string;
-  createdAt: string;
-}
-
-export interface MockAuditLog {
-  id: string;
-  userId?: string;
-  action: string;
-  resource: string;
-  metadata?: string;
-  timestamp: string;
-}
-
-export class InMemoryMockDatabase {
-  private users: Map<string, MockUser> = new Map();
-  private sessions: Map<string, MockSession> = new Map();
-  private auditLogs: MockAuditLog[] = [];
+export class InMemoryMockDatabase implements IMockDatabase {
+  public users: Map<string, MockUser> = new Map();
+  public sessions: Map<string, MockSession> = new Map();
+  public auditLogs: MockAuditLog[] = [];
   private isInitialized = false;
 
   async initialize(): Promise<void> {
     if (this.isInitialized) return;
 
     try {
+      await this.createTables();
       await this.seedData();
       this.isInitialized = true;
-      console.log('🗄️  In-memory mock database initialized');
+      console.log('??  In-memory mock database initialized');
     } catch (error) {
       console.error('Failed to initialize mock database:', error);
       throw error;
     }
+  }
+
+  async createTables(): Promise<void> {
+    // In-memory database doesn't need table creation
+    // This method exists for interface compatibility
+    console.log('??  In-memory tables ready');
   }
 
   private async seedData(): Promise<void> {
@@ -324,21 +304,24 @@ export class InMemoryMockDatabase {
     totalUsers: number;
     totalSessions: number;
     totalAuditLogs: number;
-    usersByRole: Record<string, number>;
+    usersByRole: { [key: string]: number };
+    databaseType: string;
+    connectionStatus: string;
   }> {
     await this.initialize();
     
-    const usersByRole: Record<string, number> = {};
-    
-    for (const user of this.users.values()) {
+    const usersByRole: { [key: string]: number } = {};
+    this.users.forEach(user => {
       usersByRole[user.role] = (usersByRole[user.role] || 0) + 1;
-    }
-    
+    });
+
     return {
       totalUsers: this.users.size,
       totalSessions: this.sessions.size,
       totalAuditLogs: this.auditLogs.length,
-      usersByRole
+      usersByRole,
+      databaseType: 'in-memory',
+      connectionStatus: 'healthy'
     };
   }
 
@@ -352,15 +335,13 @@ export class InMemoryMockDatabase {
   }
 
   // Health check
-  async healthCheck(): Promise<{ status: string; timestamp: string; stats: any }> {
+  async healthCheck(): Promise<{ status: string; timestamp: string; databaseType: string }> {
     await this.initialize();
-    
-    const stats = await this.getStats();
     
     return {
       status: 'healthy',
-      timestamp: new Date().toISOString(),
-      stats
+      databaseType: 'in-memory',
+      timestamp: new Date().toISOString()
     };
   }
 

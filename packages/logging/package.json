@@ -1,6 +1,6 @@
 {
   "name": "@siriux/logging",
-  "version": "1.0.1",
+  "version": "0.0.1",
   "description": "Siriux Logging - Structured logging with correlation IDs and multiple transports",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -14,16 +14,13 @@
   "keywords": [
     "siriux",
     "logging",
-    "winston",
     "structured-logging",
     "correlation-id",
-    "tracing",
-    "observability"
+    "winston"
   ],
   "author": "jawwad@alsirius.co.uk",
   "license": "MIT",
   "dependencies": {
-    "@siriux/core": "^2.0.0",
     "uuid": "^9.0.1",
     "winston": "^3.11.0",
     "winston-daily-rotate-file": "^4.7.1"
@@ -40,6 +37,5 @@
   ],
   "publishConfig": {
     "access": "public"
-  },
-  "gitHead": "7a9592f8e9ed3f1301046046e1e05811cecc24be"
+  }
 }

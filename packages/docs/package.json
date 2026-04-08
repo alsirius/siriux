@@ -1,6 +1,6 @@
 {
   "name": "@siriux/docs",
-  "version": "1.0.3",
+  "version": "0.0.1",
   "description": "Siriux Documentation - Complete guides and API documentation",
   "main": "index.js",
   "type": "module",
@@ -14,9 +14,9 @@
     "siriux",
     "documentation",
     "docs",
-    "vitepress",
     "guides",
-    "api"
+    "api",
+    "vitepress"
   ],
   "author": "jawwad@alsirius.co.uk",
   "license": "MIT",
