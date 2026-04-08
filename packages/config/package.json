@@ -1,6 +1,6 @@
 {
   "name": "@siriux/config",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Siriux Configuration - Environment variables management and validation",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -21,7 +21,7 @@
   "author": "jawwad@alsirius.co.uk",
   "license": "MIT",
   "dependencies": {
-    "@siriux/core": "^1.2.1",
+    "@siriux/core": "^1.0.0",
     "dotenv": "^16.4.5",
     "joi": "^17.13.3"
   },
