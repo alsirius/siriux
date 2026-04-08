@@ -11,6 +11,9 @@
 - **@siriux/core**: Contracts, types, interfaces ONLY (no implementation)
 - **@siriux/auth**: Authentication middleware and JWT logic
 - **@siriux/ui**: React components and auth context
+- **@siriux/access-control**: RBAC and security guards
+- **@siriux/logging**: Structured logging with correlation IDs
+- **@siriux/config**: Environment validation and management
 - **@siriux/docs**: Documentation and guides
 
 ### Code Organization
@@ -19,28 +22,75 @@ packages/
 ├── core/src/types/          # All type definitions
 ├── auth/src/middleware/     # Authentication logic
 ├── ui/src/components/       # React components
+├── access-control/src/      # RBAC and security
+├── logging/src/            # Structured logging
+├── config/src/              # Configuration management
 └── docs/docs/              # Documentation files
 ```
 
+## 🏗️ N-Tier Architecture
+
+### Application Structure
+Siriux follows enterprise N-tier architecture for applications:
+
+```
+┌─────────────────────────────────────────────────┐
+│              UI/UX Frontend Layer          │
+├─────────────────────────────────────────────────┤
+│              Routes Layer (HTTP API)      │
+├─────────────────────────────────────────────────┤
+│              Logic Layer (Business)         │
+├─────────────────────────────────────────────────┤
+│              DAO Layer (Data Access)         │
+├─────────────────────────────────────────────────┤
+│              Database Layer (Persistence)       │
+└─────────────────────────────────────────────────┘
+```
+
+### Layer Responsibilities
+- **UI Layer**: React/Next.js with @siriux/ui components
+- **Routes Layer**: Express.js HTTP endpoints with @siriux/auth
+- **Logic Layer**: Business rules and validation (Services)
+- **DAO Layer**: Data access and CRUD operations
+- **Database Layer**: Persistence with @siriux/core database utilities
+
 ## 📦 Package Development Rules
 
-### 1. Core Package (@siriux/core)
+#### @siriux/core
 - **ONLY** interfaces and types
 - **NO** implementation code
 - **NO** external dependencies except types
 - Stable contracts that rarely change
 
-### 2. Auth Package (@siriux/auth)
+#### @siriux/auth
 - JWT token generation/verification
 - Express middleware
 - Database-agnostic (teams provide their own user storage)
 - Follow @siriux/core contracts
 
-### 3. UI Package (@siriux/ui)
+#### @siriux/ui
 - React components with TypeScript
 - Tailwind CSS for styling
 - Authentication context and hooks
 - Storybook stories for components
+
+#### @siriux/access-control
+- Role-based access control (RBAC)
+- Security guards and middleware
+- Permission management
+- Integration with @siriux/auth
+
+#### @siriux/logging
+- Structured logging with correlation IDs
+- Multiple log levels and outputs
+- Integration with Winston
+- Performance and error tracking
+
+#### @siriux/config
+- Environment validation and management
+- Configuration schema validation
+- Type-safe configuration access
+- Environment-specific overrides
 
 ## 🔧 Development Guidelines
 
@@ -87,23 +137,6 @@ packages/
 3. **Maintain compatibility** - Don't break existing APIs
 4. **Write tests** - Add tests for new functionality
 5. **Update docs** - Document API changes
-
-### Package-Specific Rules:
-
-#### @siriux/core:
-- Only interfaces and types
-- No external dependencies
-- Stable, minimal changes
-
-#### @siriux/auth:
-- JWT middleware only
-- Database-agnostic
-- Use core contracts
-
-#### @siriux/ui:
-- React components only
-- Tailwind CSS styling
-- Auth context integration
 
 ## 🔍 Code Review Checklist
 
