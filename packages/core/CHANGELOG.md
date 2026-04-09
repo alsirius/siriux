@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.5.0](https://github.com/alsirius/siriux/compare/@siriux/core@1.4.0...@siriux/core@1.5.0) (2026-04-09)
+
+
+### Features
+
+* Reset all packages to version 1.0.0 for clean publishing attempt ([42245d5](https://github.com/alsirius/siriux/commit/42245d561b6a8d34c6cb82cb5241a91dc53a8cdc))
+
+
+
+
+
 # [1.4.0](https://github.com/alsirius/siriux/compare/@siriux/core@1.3.0...@siriux/core@1.4.0) (2026-04-09)
 
 
