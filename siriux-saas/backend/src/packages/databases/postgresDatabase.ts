@@ -1,8 +1,6 @@
 // PostgreSQL Database Integration
 // Production-ready PostgreSQL connector for Siriux
 
-import { IMockDatabase } from '../mock/mockDatabase';
-
 export interface PostgresConfig {
   host: string;
   port: number;
@@ -21,7 +19,7 @@ export interface PostgresQueryResult {
   command: string;
 }
 
-export class PostgresDatabase implements IMockDatabase {
+export class PostgresDatabase {
   public users: Map<string, any> = new Map();
   public sessions: Map<string, any> = new Map();
   public auditLogs: any[] = [];

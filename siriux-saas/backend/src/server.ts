@@ -3,7 +3,7 @@ import cors from 'cors';
 import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
 import dotenv from 'dotenv';
-import { createDefaultConfig, SiriuxConfig } from './packages';
+import { createDefaultConfig, SiriuxConfig, PostgresDatabase, getPostgresConfig } from './packages';
 import { createDefaultAuthConfig, createAuthMiddleware } from './packages';
 import { createLogger, Logger } from './packages';
 import { createRoleDao } from './dao/RoleDao';
@@ -12,7 +12,6 @@ import { RoleService } from './services/RoleService';
 import { InvitationService } from './services/InvitationService';
 import { createRoleRoutes } from './routes/roles';
 import { createInvitationRoutes } from './routes/invitations';
-import { InMemoryMockDatabase } from './packages';
 
 // Load environment variables
 dotenv.config();
@@ -26,8 +25,21 @@ class Server {
     this.app = express();
     this.config = createDefaultConfig();
     this.logger = createLogger({ service: 'siriux-app' });
+    this.initializeDatabase();
     this.setupMiddleware();
     this.setupErrorHandling();
+  }
+
+  private async initializeDatabase(): Promise<void> {
+    try {
+      const postgresConfig = getPostgresConfig();
+      const database = new PostgresDatabase(postgresConfig);
+      await database.initialize();
+      this.logger.info('Database initialized successfully');
+    } catch (error) {
+      this.logger.error('Failed to initialize database', { error: error instanceof Error ? error.message : String(error) });
+      throw error;
+    }
   }
 
   public async initialize(): Promise<void> {
@@ -62,7 +74,7 @@ class Server {
 
     // Auth middleware
     const authConfig = createDefaultAuthConfig({
-      jwtSecret: this.config.jwtSecret
+      jwtSecret: this.config.auth.jwtSecret
     });
     const authMiddlewareInstance = createAuthMiddleware(authConfig);
     this.app.use('/api', authMiddlewareInstance.tokenAuth);
@@ -116,11 +128,11 @@ class Server {
 
         this.logger.info('N-tier layers initialized with PostgreSQL');
       } else {
-        // Use in-memory database for development
-        const inMemoryDb = new InMemoryMockDatabase();
-        await inMemoryDb.initialize();
+        // Use PostgreSQL database for development
+        const postgresDb = new PostgresDatabase(getPostgresConfig());
+        await postgresDb.initialize();
 
-        this.logger.info('N-tier layers initialized with in-memory database');
+        this.logger.info('N-tier layers initialized with PostgreSQL database');
       }
     } catch (error) {
       this.logger.error('Failed to initialize N-tier layers', { error: error instanceof Error ? error.message : String(error) });

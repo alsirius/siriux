@@ -1,18 +1,17 @@
 import { Router, Request, Response, NextFunction } from 'express';
 import { UserService } from '../services/UserService';
 import { UserDao } from '../dao/UserDao';
-import { createLogger } from '../packages';
+import { createLogger, PostgresDatabase, getPostgresConfig } from '../packages';
 import { AuthenticatedUser } from '../packages';
-import { InMemoryMockDatabase } from '../packages';
 
 const router = Router();
 const logger = createLogger({ service: 'users-routes' });
 
-// Initialize in-memory database for users routes
-const inMemoryDb = new InMemoryMockDatabase();
-inMemoryDb.initialize().catch(err => logger.error('Failed to initialize in-memory database', { error: err }));
+// Initialize PostgreSQL database for users routes
+const postgresDb = new PostgresDatabase(getPostgresConfig());
+postgresDb.initialize().catch(err => logger.error('Failed to initialize PostgreSQL database', { error: err }));
 
-const userDao = new UserDao(inMemoryDb as any, logger);
+const userDao = new UserDao(postgresDb, logger);
 const userService = new UserService(userDao, logger);
 
 // Middleware to verify JWT token (simplified for demo)

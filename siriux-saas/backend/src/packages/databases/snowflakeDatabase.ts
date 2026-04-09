@@ -1,8 +1,6 @@
 // Real Snowflake Database Integration
 // Production-ready Snowflake connector for Siriux
 
-import { IMockDatabase } from '../mock/mockDatabase';
-
 export interface SnowflakeConfig {
   account: string;
   username: string;
@@ -21,7 +19,7 @@ export interface SnowflakeQueryResult {
   statementId: string;
 }
 
-export class SnowflakeDatabase implements IMockDatabase {
+export class SnowflakeDatabase {
   public users: Map<string, any> = new Map();
   public sessions: Map<string, any> = new Map();
   public auditLogs: any[] = [];

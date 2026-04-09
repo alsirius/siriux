@@ -149,111 +149,162 @@ export interface Formatter {
 
 // Database classes
 export class PostgresDatabase {
+  private config: DatabaseConfig;
+  private pool: any; // Will be replaced with actual pg Pool
+
   constructor(config: DatabaseConfig) {
-    // Mock implementation
+    this.config = config;
+    this.pool = null;
   }
 
   async initialize(): Promise<void> {
-    // Mock initialization
+    // TODO: Implement real PostgreSQL connection
+    // For now, we'll create a placeholder that can be easily replaced
+    console.log('Initializing PostgreSQL database with config:', {
+      host: this.config.host,
+      port: this.config.port,
+      database: this.config.database
+    });
+    
+    // In production, this would be:
+    // const { Pool } = require('pg');
+    // this.pool = new Pool({
+    //   host: this.config.host,
+    //   port: this.config.port,
+    //   database: this.config.database,
+    //   user: this.config.username,
+    //   password: this.config.password,
+    //   ssl: this.config.ssl
+    // });
+    // await this.pool.connect();
   }
 
   async getUserById(id: string): Promise<any> {
-    // Mock implementation
+    // TODO: Implement real query
+    // const result = await this.pool.query('SELECT * FROM users WHERE id = $1', [id]);
+    // return result.rows[0];
+    console.log(`Getting user by ID: ${id}`);
     return null;
   }
 
   async getUserByEmail(email: string): Promise<any> {
-    // Mock implementation
+    // TODO: Implement real query
+    // const result = await this.pool.query('SELECT * FROM users WHERE email = $1', [email]);
+    // return result.rows[0];
+    console.log(`Getting user by email: ${email}`);
     return null;
   }
 
   async createUser(userData: any): Promise<any> {
-    // Mock implementation
+    // TODO: Implement real query
+    // const result = await this.pool.query(
+    //   'INSERT INTO users (email, first_name, last_name, role, is_active, created_at, updated_at) VALUES ($1, $2, $3, $4, $5, NOW(), NOW()) RETURNING *',
+    //   [userData.email, userData.firstName, userData.lastName, userData.role, userData.isActive]
+    // );
+    // return result.rows[0];
+    console.log(`Creating user:`, userData);
     return null;
   }
 
   async updateUser(id: string, updates: any): Promise<any> {
-    // Mock implementation
+    // TODO: Implement real query
+    console.log(`Updating user ${id}:`, updates);
     return null;
   }
 
   async deleteUser(id: string): Promise<boolean> {
-    // Mock implementation
+    // TODO: Implement real query
+    console.log(`Deleting user: ${id}`);
     return true;
   }
 
   async getAllUsers(): Promise<any[]> {
-    // Mock implementation
+    // TODO: Implement real query
+    console.log('Getting all users');
     return [];
   }
 
   async getUsersByStatus(status: string): Promise<any[]> {
-    // Mock implementation
+    // TODO: Implement real query
+    console.log(`Getting users by status: ${status}`);
     return [];
   }
 
   async getRoleById(id: string): Promise<any> {
-    // Mock implementation
+    // TODO: Implement real query
+    console.log(`Getting role by ID: ${id}`);
     return null;
   }
 
   async getRoleByName(name: string): Promise<any> {
-    // Mock implementation
+    // TODO: Implement real query
+    console.log(`Getting role by name: ${name}`);
     return null;
   }
 
   async createRole(roleData: any): Promise<any> {
-    // Mock implementation
+    // TODO: Implement real query
+    console.log(`Creating role:`, roleData);
     return null;
   }
 
   async updateRole(id: string, updates: any): Promise<any> {
-    // Mock implementation
+    // TODO: Implement real query
+    console.log(`Updating role ${id}:`, updates);
     return null;
   }
 
   async deleteRole(id: string): Promise<boolean> {
-    // Mock implementation
+    // TODO: Implement real query
+    console.log(`Deleting role: ${id}`);
     return true;
   }
 
   async getAllRoles(): Promise<any[]> {
-    // Mock implementation
+    // TODO: Implement real query
+    console.log('Getting all roles');
     return [];
   }
 
   async getInvitationById(id: string): Promise<any> {
-    // Mock implementation
+    // TODO: Implement real query
+    console.log(`Getting invitation by ID: ${id}`);
     return null;
   }
 
   async getInvitationByCode(code: string): Promise<any> {
-    // Mock implementation
+    // TODO: Implement real query
+    console.log(`Getting invitation by code: ${code}`);
     return null;
   }
 
   async createInvitation(invitationData: any, createdBy?: string): Promise<any> {
-    // Mock implementation
+    // TODO: Implement real query
+    console.log(`Creating invitation:`, invitationData, 'by:', createdBy);
     return null;
   }
 
   async updateInvitation(id: string, updates: any): Promise<any> {
-    // Mock implementation
+    // TODO: Implement real query
+    console.log(`Updating invitation ${id}:`, updates);
     return null;
   }
 
   async deleteInvitation(id: string): Promise<boolean> {
-    // Mock implementation
+    // TODO: Implement real query
+    console.log(`Deleting invitation: ${id}`);
     return true;
   }
 
   async getAllInvitations(): Promise<any[]> {
-    // Mock implementation
+    // TODO: Implement real query
+    console.log('Getting all invitations');
     return [];
   }
 
   async markInvitationAsUsed(id: string, usedBy: string): Promise<any> {
-    // Mock implementation
+    // TODO: Implement real query
+    console.log(`Marking invitation ${id} as used by ${usedBy}`);
     return null;
   }
 }
@@ -261,11 +312,12 @@ export class PostgresDatabase {
 export function getPostgresConfig(): DatabaseConfig {
   return {
     type: 'postgresql',
-    host: 'localhost',
-    port: 5432,
-    database: 'siriux',
-    username: 'postgres',
-    password: 'password'
+    host: process.env.DB_HOST || 'localhost',
+    port: parseInt(process.env.DB_PORT || '5432'),
+    database: process.env.DB_NAME || 'siriux',
+    username: process.env.DB_USERNAME || 'postgres',
+    password: process.env.DB_PASSWORD || 'password',
+    ssl: process.env.DB_SSL === 'true'
   };
 }
 

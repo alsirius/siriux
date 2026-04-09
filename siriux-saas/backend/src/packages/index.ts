@@ -23,14 +23,14 @@ export function createDefaultAuthConfig(config?: any): any {
 export function createAuthMiddleware(config?: any): any {
   return {
     tokenAuth: (req: any, res: any, next: any) => {
-      // Mock auth middleware - just pass through for now
+      // Real auth middleware will be implemented
       next();
     }
   };
 }
 
-// Mock database
-export { InMemoryMockDatabase } from './mock/inMemoryMockDatabase';
+// Database
+export { PostgresDatabase, getPostgresConfig } from './types';
 
 // Version information
 export const SIRIUX_CONFIG_VERSION = '1.0.0';

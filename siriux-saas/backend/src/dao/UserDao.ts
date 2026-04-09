@@ -150,7 +150,10 @@ export class UserDao implements UserDao {
     return {
       id: dbUser.id,
       email: dbUser.email,
+      firstName: dbUser.first_name || dbUser.firstName || 'User',
+      lastName: dbUser.last_name || dbUser.lastName || 'Name',
       role: dbUser.role as UserRole,
+      isActive: dbUser.is_active !== undefined ? dbUser.is_active : (dbUser.isActive !== undefined ? dbUser.isActive : true),
       createdAt: new Date(dbUser.created_at),
       updatedAt: new Date(dbUser.updated_at)
     };

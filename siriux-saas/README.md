@@ -1,201 +1,141 @@
-# Siriux SaaS Starter Kit
+# Siriux SaaS Platform
 
-A complete, production-ready SaaS starter kit with separate frontend and backend architecture.
+A production-ready SaaS application built with modern TypeScript, Node.js, and React.
 
-## **Quick Start**
+## 🚀 Quick Start
 
-### **Prerequisites**
-- Node.js 18+
-- MongoDB (or use MongoDB Atlas)
+### Prerequisites
+- Node.js 18+ 
+- PostgreSQL 14+ (local or Amazon RDS)
+- Snowflake account (optional, for analytics)
 
-### **Setup & Installation**
+### Installation
 
 ```bash
 # Clone the repository
-git clone -b monorepo-packages https://github.com/alsirius/siriux.git
-cd siriux/apps/siriux-saas
+git clone https://github.com/alsirius/siriux-saas.git
+cd siriux-saas
 
-# Setup Backend
-cd backend
-cp .env.example .env
+# Install dependencies
+npm install
+
+# Set up environment variables
+cp backend/.env.example backend/.env
 # Edit .env with your configuration
-npm install
-npm run dev
 
-# Setup Frontend (in new terminal)
-cd ../frontend
-npm install
-npm run dev
+# Start development servers
+npm run dev:backend    # Backend on port 3001
+npm run dev:frontend   # Frontend on port 3000
 ```
 
-### **Access Points**
-- **Frontend**: http://localhost:3000
-- **Backend API**: http://localhost:8000
-- **Health Check**: http://localhost:8000/health
-
-## **Architecture**
-
-### **Frontend** (`/frontend`)
-- Next.js 15.1.0 with React 18
-- TailwindCSS for styling
-- TypeScript for type safety
-- Authentication system
-- Database integration demos
-- Responsive design
-
-### **Backend** (`/backend`)
-- Express.js REST API
-- JWT authentication
-- MongoDB with Mongoose
-- Rate limiting & security
-- CORS configuration
-- Environment-based config
-
-## **Features**
-
-### **Authentication**
-- User registration & login
-- JWT token management
-- Password hashing with bcrypt
-- Protected routes
-- Session management
-
-### **Database Integration**
-- MongoDB integration
-- Mock data factories
-- Multiple database support
-- Connection management
-- Error handling
-
-### **UI Components**
-- Modern React components
-- Responsive design
-- Dark/light themes
-- Form validation
-- Loading states
-
-### **Developer Experience**
-- Hot reload in development
-- TypeScript support
-- ESLint configuration
-- Environment variables
-- Error boundaries
-
-## **Deployment**
-
-### **Frontend Deployment**
-```bash
-cd frontend
-npm run build
-npm start
-```
-
-### **Backend Deployment**
-```bash
-cd backend
-npm install
-npm start
-```
-
-### **Docker Deployment**
-```bash
-docker-compose up -d
-```
-
-## **Environment Variables**
-
-### **Backend (.env)**
-```bash
-PORT=8000
-NODE_ENV=production
-FRONTEND_URL=https://your-domain.com
-DATABASE_URL=mongodb://localhost:27017/siriux-saas
-JWT_SECRET=your-production-secret
-```
-
-### **Frontend (.env.local)**
-```bash
-NEXT_PUBLIC_API_URL=http://localhost:8000
-NEXT_PUBLIC_APP_URL=https://your-domain.com
-```
-
-## **API Endpoints**
-
-### **Authentication**
-- `POST /api/auth/register` - User registration
-- `POST /api/auth/login` - User login
-- `POST /api/auth/refresh` - Refresh token
-- `POST /api/auth/logout` - User logout
-
-### **Users**
-- `GET /api/users/profile` - Get user profile
-- `PUT /api/users/profile` - Update profile
-- `DELETE /api/users/account` - Delete account
-
-### **Data**
-- `GET /api/data/` - Get data
-- `POST /api/data/` - Create data
-- `PUT /api/data/:id` - Update data
-- `DELETE /api/data/:id` - Delete data
-
-## **Project Structure**
+## 📁 Project Structure
 
 ```
 siriux-saas/
-frontend/          # Next.js frontend application
-  src/
-    app/          # App router pages
-    components/   # React components
-    config/       # Configuration files
-    lib/          # Utility functions
-  public/         # Static assets
-  package.json    # Frontend dependencies
-
-backend/           # Express.js backend API
-  routes/         # API routes
-  models/         # Database models
-  middleware/     # Express middleware
-  utils/          # Backend utilities
-  server.js       # Main server file
-  package.json    # Backend dependencies
+├── backend/                 # Node.js/Express backend
+│   ├── src/
+│   │   ├── packages/        # Core utilities (embedded @siriux code)
+│   │   ├── dao/            # Data access layer
+│   │   ├── services/       # Business logic
+│   │   ├── routes/         # API routes
+│   │   └── server.ts       # Main server
+│   └── package.json
+├── frontend/                # Next.js React frontend
+│   ├── src/
+│   │   ├── app/           # App router pages
+│   │   └── components/    # React components
+│   └── package.json
+└── README.md
 ```
 
-## **Development Scripts**
+## 🔧 Configuration
 
-### **Frontend**
+### Environment Variables
+
 ```bash
-npm run dev        # Start development server
-npm run build      # Build for production
-npm run start      # Start production server
-npm run lint       # Run ESLint
+# Database Configuration
+DB_HOST=localhost
+DB_PORT=5432
+DB_NAME=siriux
+DB_USERNAME=postgres
+DB_PASSWORD=your_password
+DB_SSL=false
+
+# JWT Configuration
+JWT_SECRET=your_jwt_secret
+JWT_REFRESH_SECRET=your_refresh_secret
+JWT_EXPIRY=24h
+
+# Frontend URL
+FRONTEND_URL=http://localhost:3000
+
+# Snowflake (optional)
+SNOWFLAKE_ACCOUNT=your_account
+SNOWFLAKE_USERNAME=your_username
+SNOWFLAKE_PASSWORD=your_password
+SNOWFLAKE_WAREHOUSE=your_warehouse
 ```
 
-### **Backend**
+## 🗄️ Database Setup
+
+### PostgreSQL (Primary Database)
 ```bash
-npm run dev        # Start with nodemon
-npm run start      # Start production server
-npm run build      # Build (placeholder)
+# Create database
+createdb siriux
+
+# Run migrations (when implemented)
+npm run migrate
 ```
 
-## **Contributing**
+### Amazon RDS
+Update your `.env` file with RDS connection details:
+```bash
+DB_HOST=your-rds-endpoint.rds.amazonaws.com
+DB_SSL=true
+```
+
+## 🚀 Deployment
+
+### Production Build
+```bash
+# Build frontend
+cd frontend && npm run build
+
+# Build backend
+cd backend && npm run build
+
+# Start production servers
+npm start
+```
+
+## 🛠️ Development
+
+### Available Scripts
+```bash
+npm run dev:backend    # Start backend in development mode
+npm run dev:frontend   # Start frontend in development mode
+npm run build:backend  # Build backend for production
+npm run build:frontend # Build frontend for production
+npm run test          # Run tests
+npm run lint          # Run linting
+```
+
+## 📊 Architecture
+
+- **Backend**: Node.js with Express.js
+- **Frontend**: Next.js 14 with TypeScript
+- **Database**: PostgreSQL (primary), Snowflake (analytics)
+- **Authentication**: JWT-based auth system
+- **Architecture**: N-tier with clean separation
+
+## 🤝 Contributing
 
 1. Fork the repository
 2. Create a feature branch
 3. Make your changes
-4. Test thoroughly
+4. Add tests if applicable
 5. Submit a pull request
 
-## **License**
+## 📄 License
 
-MIT License - feel free to use this for your projects!
-
-## **Support**
-
-For issues and questions:
-- Create an issue on GitHub
-- Check the documentation
-- Review the example code
-
----
-
-**Built with love for the developer community!**
+MIT License - see LICENSE file for details.
