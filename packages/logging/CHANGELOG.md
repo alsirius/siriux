@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.7.0](https://github.com/alsirius/siriux/compare/@siriux/logging@1.6.0...@siriux/logging@1.7.0) (2026-04-09)
+
+
+### Features
+
+* Force publish packages to npm registry ([92810c1](https://github.com/alsirius/siriux/commit/92810c119ed68e7e34b00566c192ed74ec053a5e))
+
+
+
+
+
 # [1.6.0](https://github.com/alsirius/siriux/compare/@siriux/logging@1.5.0...@siriux/logging@1.6.0) (2026-04-09)
 
 
