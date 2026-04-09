@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.4.0](https://github.com/alsirius/siriux/compare/@siriux/access-control@1.3.0...@siriux/access-control@1.4.0) (2026-04-09)
+
+
+### Features
+
+* Reset all packages to version 1.0.0 for clean publishing ([cce9d6c](https://github.com/alsirius/siriux/commit/cce9d6ce4fb4760a1e12cf2e360506b10a2c7257))
+
+
+
+
+
 # [1.3.0](https://github.com/alsirius/siriux/compare/@siriux/access-control@1.2.1...@siriux/access-control@1.3.0) (2026-04-08)
 
 

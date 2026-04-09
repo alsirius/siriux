@@ -1,6 +1,6 @@
 {
   "name": "@siriux/auth",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "description": "Siriux Authentication - JWT authentication and session management",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -21,7 +21,7 @@
   "author": "jawwad@alsirius.co.uk",
   "license": "MIT",
   "dependencies": {
-    "@siriux/core": "^1.3.0",
+    "@siriux/core": "^1.4.0",
     "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
