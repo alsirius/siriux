@@ -35,21 +35,6 @@ const auth = createAuthMiddleware({
 app.use('/api/protected', auth.tokenAuth);
 ```
 
-### UI Components
-
-```typescript
-import { AuthProvider, LoginForm, Icon } from '@siriux/ui';
-
-function App() {
-  return (
-    <AuthProvider>
-      <LoginForm />
-      <Icon name="user" size="md" />
-    </AuthProvider>
-  );
-}
-```
-
 ### Access Control
 
 ```typescript

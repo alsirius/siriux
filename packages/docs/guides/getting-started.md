@@ -2,6 +2,28 @@
 
 Welcome to Siriux! This guide will help you get up and running with the Siriux platform.
 
+## 🚀 Quick Start with CLI Tool
+
+The fastest way to get started is using the Siriux CLI tool to create a new project with our starter template:
+
+```bash
+# Create a new SaaS project with the starter template
+npm create siriux-app@latest my-saas --template saas
+
+# Or use the interactive CLI
+npm create siriux-app@latest my-saas
+```
+
+The CLI tool will prompt you to choose a template and set up your project with all the necessary dependencies and configuration.
+
+### Available Templates
+
+- **SaaS Template** - Complete SaaS application with authentication, user management, and admin dashboard
+- **API Template** - Backend API with authentication and database integration
+- **Minimal Template** - Minimal setup for custom implementations
+
+For more details, see the [CLI Tool documentation](../tools/cli.md) and [Starter Kit documentation](../tools/starter-kit.md).
+
 ## 🎯 What is Siriux?
 
 Siriux is a **modular SaaS platform toolkit** that helps you build scalable applications faster. Instead of a monolithic framework, Siriux provides focused packages that work together but can be used independently.
@@ -10,7 +32,6 @@ Siriux is a **modular SaaS platform toolkit** that helps you build scalable appl
 
 - **@siriux/core** - Type contracts and interfaces with multi-database support
 - **@siriux/auth** - JWT authentication middleware  
-- **@siriux/ui** - React UI components
 - **@siriux/access-control** - RBAC and permissions
 - **@siriux/logging** - Multi-output logging system
 - **@siriux/config** - Configuration management
@@ -57,26 +78,6 @@ app.get('/api/profile', auth.tokenAuth, (req, res) => {
 });
 
 app.listen(3000);
-```
-
-### 3. Frontend Setup (React)
-
-```typescript
-// App.tsx
-import React from 'react';
-import { AuthProvider, LoginForm } from '@siriux/ui';
-
-function App() {
-  return (
-    <AuthProvider>
-      <LoginForm 
-        onSuccess={(user, tokens) => {
-          console.log('Logged in!', user);
-        }}
-      />
-    </AuthProvider>
-  );
-}
 ```
 
 ## 🗄️ Database Setup
@@ -237,45 +238,13 @@ app.listen(3001, () => {
 
 ```typescript
 import React from 'react';
-import { AuthProvider, LoginForm, useAuth } from '@siriux/ui';
-
-function ProfilePage() {
-  const { user, isAuthenticated, logout } = useAuth();
-  
-  if (!isAuthenticated) {
-    return <div>Please log in</div>;
-  }
-  
-  return (
-    <div>
-      <h1>Welcome, {user?.email}!</h1>
-      <button onClick={logout}>Logout</button>
-    </div>
-  );
-}
-
-function LoginPage() {
-  return (
-    <div>
-      <h1>Login</h1>
-      <LoginForm 
-        onSuccess={(user, tokens) => {
-          console.log('Logged in!', user);
-          // Navigate to profile page
-        }}
-        onError={(error) => {
-          console.error('Login failed:', error);
-        }}
-      />
-    </div>
-  );
-}
 
 function App() {
   return (
-    <AuthProvider apiBaseUrl="http://localhost:3001/api">
-      <LoginPage />
-    </AuthProvider>
+    <div>
+      <h1>Frontend Integration</h1>
+      <p>Use Siriux backend packages with your preferred frontend framework.</p>
+    </div>
   );
 }
 
@@ -329,7 +298,6 @@ console.log('Mock mode:', isMockMode()); // true in development
 
 ```bash
 npm install @siriux/auth
-npm install @siriux/ui
 
 # Works immediately - no backend needed!
 ```
@@ -686,8 +654,8 @@ The mock system provides the **complete Siriux experience** with zero infrastruc
 You've successfully set up Siriux! You now have:
 
 - ✅ JWT-based authentication
-- ✅ React UI components  
 - ✅ Type-safe interfaces
 - ✅ Scalable architecture
+- ✅ Multi-database support
 
 Ready to build your SaaS application? 🚀

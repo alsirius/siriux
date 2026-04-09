@@ -22,15 +22,6 @@ Siriux is organized as a collection of focused packages that work together but c
 - 🔄 Token refresh mechanism
 - 📱 Session management
 
-### @siriux/ui
-**React UI components** - Modern components built for SaaS applications.
-
-- 🎨 Authentication forms (Login, Register, Forgot Password)
-- 📱 Responsive design with Tailwind CSS
-- 🌙 Dark mode support
-- 🔗 Authentication context and hooks
-- ♿ Accessibility built-in
-
 ### @siriux/access-control
 **Security and permissions** - Role-based access control, permissions, and policies.
 
@@ -128,7 +119,6 @@ npm create siriux-app@latest my-saas --template saas
 
 - [@siriux/core Guide](/packages/core)
 - [@siriux/auth Guide](/packages/auth)  
-- [@siriux/ui Guide](/packages/ui)
 - [@siriux/access-control Guide](/packages/access-control)
 - [@siriux/logging Guide](/packages/logging)
 - [@siriux/config Guide](/packages/config)
@@ -141,12 +131,11 @@ npm create siriux-app@latest my-saas --template saas
 
 ## 📊 Package Matrix
 
-| Package | Core | Auth | UI | Access Control | Logging | Config | Docs |
-|---------|------|------|-----|----------------|---------|--------|------|
-| **@siriux/core** | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ |
-| **@siriux/auth** | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ |
-| **@siriux/ui** | ✅ | ❌ | ✅ | ❌ | ❌ | ❌ | ❌ |
-| **@siriux/access-control** | ✅ | ❌ | ❌ | ✅ | ❌ | ❌ | ❌ |
-| **@siriux/logging** | ✅ | ❌ | ❌ | ❌ | ✅ | ❌ | ❌ |
-| **@siriux/config** | ✅ | ❌ | ❌ | ❌ | ❌ | ✅ | ❌ |
-| **@siriux/docs** | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ |
+| Package | Core | Auth | Access Control | Logging | Config | Docs |
+|---------|------|------|----------------|---------|--------|------|
+| **@siriux/core** | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ |
+| **@siriux/auth** | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ |
+| **@siriux/access-control** | ✅ | ❌ | ✅ | ❌ | ❌ | ❌ |
+| **@siriux/logging** | ✅ | ❌ | ❌ | ✅ | ❌ | ❌ |
+| **@siriux/config** | ✅ | ❌ | ❌ | ❌ | ✅ | ❌ |
+| **@siriux/docs** | ✅ | ❌ | ❌ | ❌ | ❌ | ✅ |
