@@ -1,3 +1,4 @@
+import { PostgresDatabase, getPostgresConfig } from '@siriux/core';
 import { Logger } from '@siriux/logging';
 
 export interface Role {
@@ -25,55 +26,54 @@ export interface RoleDao {
 }
 
 export class RoleDaoImpl implements RoleDao {
-  private roles: Role[] = [];
+  private database: PostgresDatabase;
   private logger: Logger;
+  private initialized: boolean = false;
 
-  constructor(logger: Logger) {
+  constructor(database: PostgresDatabase, logger: Logger) {
+    this.database = database;
     this.logger = logger;
-    
-    // Initialize with default roles
-    this.roles = [
-      {
-        id: '1',
-        name: 'admin',
-        description: 'Full system access',
-        permissions: ['*'],
-        createdAt: new Date('2024-01-01'),
-        updatedAt: new Date('2024-01-01')
-      },
-      {
-        id: '2',
-        name: 'user',
-        description: 'Standard user access',
-        permissions: ['read:own', 'update:own'],
-        createdAt: new Date('2024-01-01'),
-        updatedAt: new Date('2024-01-01')
-      },
-      {
-        id: '3',
-        name: 'manager',
-        description: 'Team management access',
-        permissions: ['read:own', 'update:own', 'read:team', 'update:team'],
-        createdAt: new Date('2024-01-01'),
-        updatedAt: new Date('2024-01-01')
+  }
+
+  private async ensureInitialized(): Promise<void> {
+    if (!this.initialized) {
+      try {
+        await this.database.initialize();
+        this.initialized = true;
+      } catch (error) {
+        this.logger.error('Failed to initialize database', { error: error instanceof Error ? error.message : String(error) });
+        throw error;
       }
-    ];
+    }
   }
 
   public async findById(id: string): Promise<Role | null> {
     this.logger.debug('Finding role by ID', { roleId: id });
-    const role = this.roles.find(r => r.id === id);
-    return role || null;
+    await this.ensureInitialized();
+    
+    const role = await this.database.getRoleById(id);
+    if (!role) {
+      return null;
+    }
+
+    return this.mapToRole(role);
   }
 
   public async findByName(name: string): Promise<Role | null> {
     this.logger.debug('Finding role by name', { roleName: name });
-    const role = this.roles.find(r => r.name === name);
-    return role || null;
+    await this.ensureInitialized();
+    
+    const role = await this.database.getRoleByName(name);
+    if (!role) {
+      return null;
+    }
+
+    return this.mapToRole(role);
   }
 
   public async create(roleData: CreateRoleRequest): Promise<Role> {
     this.logger.info('Creating role', { roleName: roleData.name });
+    await this.ensureInitialized();
     
     // Check if role already exists
     const existingRole = await this.findByName(roleData.name);
@@ -81,65 +81,64 @@ export class RoleDaoImpl implements RoleDao {
       throw new Error('Role with this name already exists');
     }
 
-    const newRole: Role = {
-      id: Math.random().toString(36).substr(2, 9),
-      name: roleData.name,
-      description: roleData.description,
-      permissions: roleData.permissions,
-      createdAt: new Date(),
-      updatedAt: new Date()
-    };
+    const createdRole = await this.database.createRole(roleData);
 
-    this.roles.push(newRole);
-    this.logger.info('Role created successfully', { roleId: newRole.id });
+    this.logger.info('Role created successfully', { roleId: createdRole.id });
     
-    return newRole;
+    return this.mapToRole(createdRole);
   }
 
   public async update(id: string, updates: Partial<Role>): Promise<Role | null> {
     this.logger.debug('Updating role', { roleId: id, updates });
+    await this.ensureInitialized();
     
-    const roleIndex = this.roles.findIndex(r => r.id === id);
-    if (roleIndex === -1) {
+    const updatedRole = await this.database.updateRole(id, updates);
+    if (!updatedRole) {
       this.logger.warn('Role not found for update', { roleId: id });
       return null;
     }
-
-    const currentRole = this.roles[roleIndex];
-    if (!currentRole) {
-      this.logger.warn('Role not found for update', { roleId: id });
-      return null;
-    }
-
-    this.roles[roleIndex] = {
-      id: currentRole.id,
-      name: updates.name ?? currentRole.name,
-      description: updates.description ?? currentRole.description,
-      permissions: updates.permissions ?? currentRole.permissions,
-      createdAt: currentRole.createdAt,
-      updatedAt: new Date()
-    };
 
     this.logger.info('Role updated successfully', { roleId: id });
-    return this.roles[roleIndex];
+    return this.mapToRole(updatedRole);
   }
 
   public async delete(id: string): Promise<boolean> {
     this.logger.debug('Deleting role', { roleId: id });
+    await this.ensureInitialized();
     
-    const roleIndex = this.roles.findIndex(r => r.id === id);
-    if (roleIndex === -1) {
+    const deleted = await this.database.deleteRole(id);
+    if (!deleted) {
       this.logger.warn('Role not found for deletion', { roleId: id });
       return false;
     }
 
-    this.roles.splice(roleIndex, 1);
     this.logger.info('Role deleted successfully', { roleId: id });
     return true;
   }
 
   public async findAll(): Promise<Role[]> {
     this.logger.debug('Finding all roles');
-    return this.roles;
+    await this.ensureInitialized();
+    
+    const roles = await this.database.getAllRoles();
+    return roles.map((role: any) => this.mapToRole(role));
+  }
+
+  private mapToRole(dbRole: any): Role {
+    return {
+      id: dbRole.id,
+      name: dbRole.name,
+      description: dbRole.description,
+      permissions: Array.isArray(dbRole.permissions) ? dbRole.permissions : JSON.parse(dbRole.permissions || '[]'),
+      createdAt: new Date(dbRole.created_at),
+      updatedAt: new Date(dbRole.updated_at)
+    };
   }
 }
+
+// Factory function to create RoleDao with PostgreSQL
+export const createRoleDao = async (logger: Logger): Promise<RoleDaoImpl> => {
+  const config = getPostgresConfig();
+  const database = new PostgresDatabase(config);
+  return new RoleDaoImpl(database, logger);
+};

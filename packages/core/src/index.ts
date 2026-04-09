@@ -19,6 +19,13 @@ export {
   getSnowflakeConfig
 } from './databases/snowflakeDatabase';
 
+// Re-export PostgreSQL database
+export {
+  PostgresDatabase,
+  getPostgresConfig,
+  createPostgresDatabase
+} from './databases/postgresDatabase';
+
 // Version information
 export const SIRIUX_CORE_VERSION = '1.0.0';
 

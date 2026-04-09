@@ -1,11 +1,25 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { useTheme } from '../components/ThemeProvider';
 import { appConfig } from '../../config/app-config';
 
+export const dynamic = 'force-dynamic';
+
 export default function NotFound() {
-  const { isDarkMode } = useTheme();
+  const [isDarkMode, setIsDarkMode] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+    // Check for dark mode preference
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    setIsDarkMode(prefersDark);
+  }, []);
+
+  if (!mounted) {
+    return null;
+  }
 
   return (
     <div className={`min-h-screen flex items-center justify-center ${isDarkMode ? 'bg-gray-900' : 'bg-gradient-to-br from-blue-50 to-indigo-100'}`}>
@@ -34,15 +48,15 @@ export default function NotFound() {
             <Link
               href="/demo"
               className={`px-8 py-3 font-semibold rounded-lg transition-colors border-2 ${
-                isDarkMode 
-                  ? 'border-gray-600 text-gray-300 hover:bg-gray-800' 
+                isDarkMode
+                  ? 'border-gray-600 text-gray-300 hover:bg-gray-800'
                   : 'border-gray-300 text-gray-700 hover:bg-gray-50'
               }`}
             >
               View Demo
             </Link>
           </div>
-          
+
           <div className="flex justify-center space-x-6">
             <Link
               href={appConfig.app.docsUrl || 'https://docs.siriux.dev'}

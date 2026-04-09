@@ -41,12 +41,6 @@ export default function NavBar() {
             {appConfig.menu.authenticated && (
               <>
                 <Link
-                  href={appConfig.menu.authenticated.dashboard.href}
-                  className="text-gray-600 hover:text-gray-900 transition-colors font-medium"
-                >
-                  {appConfig.menu.authenticated.dashboard.label}
-                </Link>
-                <Link
                   href={appConfig.menu.authenticated.profile.href}
                   className="text-gray-600 hover:text-gray-900 transition-colors font-medium"
                 >
@@ -120,13 +114,6 @@ export default function NavBar() {
             ))}
             {appConfig.menu.authenticated && (
               <>
-                <Link
-                  href={appConfig.menu.authenticated.dashboard.href}
-                  className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50"
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  {appConfig.menu.authenticated.dashboard.label}
-                </Link>
                 <Link
                   href={appConfig.menu.authenticated.profile.href}
                   className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50"

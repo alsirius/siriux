@@ -3,10 +3,16 @@ import { UserService } from '../services/UserService';
 import { UserDao } from '../dao/UserDao';
 import { createLogger } from '@siriux/logging';
 import { AuthenticatedUser } from '@siriux/core';
+import { InMemoryMockDatabase } from '@siriux/core';
 
 const router = Router();
 const logger = createLogger({ service: 'users-routes' });
-const userDao = new UserDao(logger);
+
+// Initialize in-memory database for users routes
+const inMemoryDb = new InMemoryMockDatabase();
+inMemoryDb.initialize().catch(err => logger.error('Failed to initialize in-memory database', { error: err }));
+
+const userDao = new UserDao(inMemoryDb as any, logger);
 const userService = new UserService(userDao, logger);
 
 // Middleware to verify JWT token (simplified for demo)

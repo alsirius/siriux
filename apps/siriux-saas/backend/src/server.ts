@@ -6,6 +6,13 @@ import dotenv from 'dotenv';
 import { createDefaultConfig, SiriuxConfig } from '@siriux/core';
 import { createDefaultAuthConfig, createAuthMiddleware } from '@siriux/auth';
 import { createLogger, Logger } from '@siriux/logging';
+import { createRoleDao } from './dao/RoleDao';
+import { createInvitationDao } from './dao/InvitationDao';
+import { RoleService } from './services/RoleService';
+import { InvitationService } from './services/InvitationService';
+import { createRoleRoutes } from './routes/roles';
+import { createInvitationRoutes } from './routes/invitations';
+import { InMemoryMockDatabase } from '@siriux/core';
 
 // Load environment variables
 dotenv.config();
@@ -31,8 +38,11 @@ class Server {
     });
     
     this.setupMiddleware();
-    this.setupRoutes();
     this.setupErrorHandling();
+  }
+
+  public async initialize(): Promise<void> {
+    await this.setupRoutes();
   }
 
   private setupMiddleware(): void {
@@ -79,7 +89,7 @@ class Server {
     });
   }
 
-  private setupRoutes(): void {
+  private async setupRoutes(): Promise<void> {
     // Health check
     this.app.get('/health', (_req: Request, res: Response) => {
       res.json({
@@ -93,12 +103,40 @@ class Server {
       });
     });
 
-    // API routes will be added here
-    // This is where we'll add N-tier layers:
-    // - Routes layer (HTTP endpoints)
-    // - Logic layer (business logic) 
-    // - DAO layer (data access)
-    // - Database layer (persistence)
+    // Initialize N-tier layers
+    try {
+      // Check if PostgreSQL is configured
+      const usePostgreSQL = process.env['PGPASSWORD'] && process.env['PGHOST'];
+
+      if (usePostgreSQL) {
+        // Use PostgreSQL if configured
+        const roleDao = await createRoleDao(this.logger);
+        const invitationDao = await createInvitationDao(this.logger);
+
+        // Create service layer
+        const roleService = new RoleService(roleDao, this.logger);
+        const invitationService = new InvitationService(invitationDao, this.logger);
+
+        // Wire up routes
+        const roleRoutes = createRoleRoutes(roleService);
+        const invitationRoutes = createInvitationRoutes(invitationService);
+
+        // API routes
+        this.app.use('/api/roles', roleRoutes);
+        this.app.use('/api/invitations', invitationRoutes);
+
+        this.logger.info('N-tier layers initialized with PostgreSQL');
+      } else {
+        // Use in-memory database for development
+        const inMemoryDb = new InMemoryMockDatabase();
+        await inMemoryDb.initialize();
+
+        this.logger.info('N-tier layers initialized with in-memory database');
+      }
+    } catch (error) {
+      this.logger.error('Failed to initialize N-tier layers', { error: error instanceof Error ? error.message : String(error) });
+      throw error;
+    }
   }
 
   private setupErrorHandling(): void {
@@ -136,7 +174,9 @@ class Server {
     });
   }
 
-  public start(): void {
+  public async start(): Promise<void> {
+    await this.initialize();
+    
     const port = parseInt(process.env['PORT'] || '8000');
     
     this.app.listen(port, () => {
@@ -161,6 +201,9 @@ class Server {
 
 // Start the server
 const server = new Server();
-server.start();
+server.start().catch(error => {
+  console.error('Failed to start server:', error);
+  process.exit(1);
+});
 
 export default server;

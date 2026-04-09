@@ -26,13 +26,19 @@ fi
 # Test if production server can start
 echo "Testing production server..."
 if npm start > /dev/null 2>&1 & then
+    SERVER_PID=$!
     sleep 3
     if curl -s http://localhost:3000 > /dev/null; then
         echo "Production server started successfully!"
-        pkill -f "next start"
+        kill $SERVER_PID 2>/dev/null
+        sleep 2
+        # Ensure port is completely freed
+        lsof -ti :3000 | xargs kill -9 2>/dev/null
     else
         echo "Production server test failed"
-        pkill -f "next start"
+        kill $SERVER_PID 2>/dev/null
+        sleep 2
+        lsof -ti :3000 | xargs kill -9 2>/dev/null
         exit 1
     fi
 else

@@ -1,3 +1,4 @@
+import { PostgresDatabase, getPostgresConfig } from '@siriux/core';
 import { Logger } from '@siriux/logging';
 
 export interface InvitationCode {
@@ -27,115 +28,127 @@ export interface InvitationDao {
 }
 
 export class InvitationDaoImpl implements InvitationDao {
-  private invitations: InvitationCode[] = [];
+  private database: PostgresDatabase;
   private logger: Logger;
+  private initialized: boolean = false;
 
-  constructor(logger: Logger) {
+  constructor(database: PostgresDatabase, logger: Logger) {
+    this.database = database;
     this.logger = logger;
-    
-    // Initialize with sample data
-    this.invitations = [
-      {
-        id: '1',
-        code: 'SIRIUX-2024-ABC123',
-        createdBy: 'admin',
-        createdAt: new Date('2024-01-15'),
-        usedBy: null,
-        usedAt: null,
-        usableBy: 'anyone',
-        status: 'active'
+  }
+
+  private async ensureInitialized(): Promise<void> {
+    if (!this.initialized) {
+      try {
+        await this.database.initialize();
+        this.initialized = true;
+      } catch (error) {
+        this.logger.error('Failed to initialize database', { error: error instanceof Error ? error.message : String(error) });
+        throw error;
       }
-    ];
+    }
   }
 
   public async findById(id: string): Promise<InvitationCode | null> {
     this.logger.debug('Finding invitation by ID', { invitationId: id });
-    const invitation = this.invitations.find(i => i.id === id);
-    return invitation || null;
+    await this.ensureInitialized();
+    
+    const invitation = await this.database.getInvitationById(id);
+    if (!invitation) {
+      return null;
+    }
+
+    return this.mapToInvitationCode(invitation);
   }
 
   public async findByCode(code: string): Promise<InvitationCode | null> {
     this.logger.debug('Finding invitation by code', { code });
-    const invitation = this.invitations.find(i => i.code === code);
-    return invitation || null;
+    await this.ensureInitialized();
+    
+    const invitation = await this.database.getInvitationByCode(code);
+    if (!invitation) {
+      return null;
+    }
+
+    return this.mapToInvitationCode(invitation);
   }
 
   public async create(invitationData: CreateInvitationRequest, createdBy: string): Promise<InvitationCode> {
     this.logger.info('Creating invitation', { usableBy: invitationData.usableBy });
+    await this.ensureInitialized();
     
-    const newInvitation: InvitationCode = {
-      id: Math.random().toString(36).substr(2, 9),
-      code: `SIRIUX-${new Date().getFullYear()}-${Math.random().toString(36).substring(2, 8).toUpperCase()}`,
-      createdBy,
-      createdAt: new Date(),
-      usedBy: null,
-      usedAt: null,
-      usableBy: invitationData.usableBy,
-      status: 'active'
-    };
+    const createdInvitation = await this.database.createInvitation(invitationData, createdBy);
 
-    this.invitations.push(newInvitation);
-    this.logger.info('Invitation created successfully', { invitationId: newInvitation.id, code: newInvitation.code });
+    this.logger.info('Invitation created successfully', { invitationId: createdInvitation.id, code: createdInvitation.code });
     
-    return newInvitation;
+    return this.mapToInvitationCode(createdInvitation);
   }
 
   public async update(id: string, updates: Partial<InvitationCode>): Promise<InvitationCode | null> {
     this.logger.debug('Updating invitation', { invitationId: id, updates });
+    await this.ensureInitialized();
     
-    const invitationIndex = this.invitations.findIndex(i => i.id === id);
-    if (invitationIndex === -1) {
+    const updatedInvitation = await this.database.updateInvitation(id, updates);
+    if (!updatedInvitation) {
       this.logger.warn('Invitation not found for update', { invitationId: id });
       return null;
     }
-
-    const currentInvitation = this.invitations[invitationIndex];
-    if (!currentInvitation) {
-      this.logger.warn('Invitation not found for update', { invitationId: id });
-      return null;
-    }
-
-    this.invitations[invitationIndex] = {
-      id: currentInvitation.id,
-      code: updates.code ?? currentInvitation.code,
-      createdBy: currentInvitation.createdBy,
-      createdAt: currentInvitation.createdAt,
-      usedBy: updates.usedBy ?? currentInvitation.usedBy,
-      usedAt: updates.usedAt ?? currentInvitation.usedAt,
-      usableBy: updates.usableBy ?? currentInvitation.usableBy,
-      status: updates.status ?? currentInvitation.status
-    };
 
     this.logger.info('Invitation updated successfully', { invitationId: id });
-    return this.invitations[invitationIndex];
+    return this.mapToInvitationCode(updatedInvitation);
   }
 
   public async delete(id: string): Promise<boolean> {
     this.logger.debug('Deleting invitation', { invitationId: id });
+    await this.ensureInitialized();
     
-    const invitationIndex = this.invitations.findIndex(i => i.id === id);
-    if (invitationIndex === -1) {
+    const deleted = await this.database.deleteInvitation(id);
+    if (!deleted) {
       this.logger.warn('Invitation not found for deletion', { invitationId: id });
       return false;
     }
 
-    this.invitations.splice(invitationIndex, 1);
     this.logger.info('Invitation deleted successfully', { invitationId: id });
     return true;
   }
 
   public async findAll(): Promise<InvitationCode[]> {
     this.logger.debug('Finding all invitations');
-    return this.invitations;
+    await this.ensureInitialized();
+    
+    const invitations = await this.database.getAllInvitations();
+    return invitations.map((invitation: any) => this.mapToInvitationCode(invitation));
   }
 
   public async markAsUsed(id: string, usedBy: string): Promise<InvitationCode | null> {
     this.logger.info('Marking invitation as used', { invitationId: id, usedBy });
+    await this.ensureInitialized();
     
-    return this.update(id, {
-      usedBy,
-      usedAt: new Date(),
-      status: 'used'
-    });
+    const markedInvitation = await this.database.markInvitationAsUsed(id, usedBy);
+    if (!markedInvitation) {
+      return null;
+    }
+
+    return this.mapToInvitationCode(markedInvitation);
+  }
+
+  private mapToInvitationCode(dbInvitation: any): InvitationCode {
+    return {
+      id: dbInvitation.id,
+      code: dbInvitation.code,
+      createdBy: dbInvitation.created_by,
+      createdAt: new Date(dbInvitation.created_at),
+      usedBy: dbInvitation.used_by,
+      usedAt: dbInvitation.used_at ? new Date(dbInvitation.used_at) : null,
+      usableBy: dbInvitation.usable_by,
+      status: dbInvitation.status
+    };
   }
 }
+
+// Factory function to create InvitationDao with PostgreSQL
+export const createInvitationDao = async (logger: Logger): Promise<InvitationDaoImpl> => {
+  const config = getPostgresConfig();
+  const database = new PostgresDatabase(config);
+  return new InvitationDaoImpl(database, logger);
+};

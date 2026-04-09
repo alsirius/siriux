@@ -2,10 +2,33 @@
 
 ## 🏗️ Architecture Rules
 
-### Package Structure
-- **Modular Design**: Each package has single responsibility
-- **Independent Versioning**: Packages can be updated independently
-- **Clear Dependencies**: Core contracts in @siriux/core, implementation in focused packages
+### Monorepo Structure
+```
+siriux-monorepo/
+├── create-siriux-app/      # CLI tool for creating new Siriux apps
+│   ├── src/
+│   │   ├── cli.ts         # Main CLI logic
+│   │   ├── creator.ts     # App creation logic
+│   │   └── index.ts       # Entry point
+│   ├── templates/         # App templates
+│   ├── package.json
+│   └── tsconfig.json
+├── landing-page/          # Static marketing site (separate from app)
+│   └── index.html         # Landing page for marketing
+├── apps/
+│   └── siriux-saas/       # Main SaaS application (what developers clone)
+│       ├── frontend/      # Next.js frontend with dashboard as home page
+│       └── backend/       # Express.js backend with N-tier architecture
+├── packages/              # Shared packages
+│   ├── core/             # Types, interfaces, database utilities
+│   ├── auth/             # Authentication middleware
+│   ├── logging/          # Structured logging
+│   ├── ui/               # React components
+│   ├── config/           # Configuration management
+│   ├── access-control/   # RBAC and security
+│   └── docs/             # Documentation
+└── .windsurf/            # AI coding rules and documentation
+```
 
 ### Package Responsibilities
 - **@siriux/core**: Contracts, types, interfaces ONLY (no implementation)
@@ -15,18 +38,6 @@
 - **@siriux/logging**: Structured logging with correlation IDs
 - **@siriux/config**: Environment validation and management
 - **@siriux/docs**: Documentation and guides
-
-### Code Organization
-```
-packages/
-├── core/src/types/          # All type definitions
-├── auth/src/middleware/     # Authentication logic
-├── ui/src/components/       # React components
-├── access-control/src/      # RBAC and security
-├── logging/src/            # Structured logging
-├── config/src/              # Configuration management
-└── docs/docs/              # Documentation files
-```
 
 ## 🏗️ N-Tier Architecture
 
@@ -54,39 +65,7 @@ Siriux follows enterprise N-tier architecture for applications:
 - **DAO Layer**: Data access and CRUD operations
 - **Database Layer**: Persistence with @siriux/core database utilities
 
-## 📦 Package Development Rules
-
-#### @siriux/core
-- **ONLY** interfaces and types
-- **NO** implementation code
-- **NO** external dependencies except types
-- Stable contracts that rarely change
-
-#### @siriux/auth
-- JWT token generation/verification
-- Express middleware
-- Database-agnostic (teams provide their own user storage)
-- Follow @siriux/core contracts
-
-#### @siriux/access-control
-- Role-based access control (RBAC)
-- Security guards and middleware
-- Permission management
-- Integration with @siriux/auth
-
-#### @siriux/logging
-- Structured logging with correlation IDs
-- Multiple log levels and outputs
-- Integration with Winston
-- Performance and error tracking
-
-#### @siriux/config
-- Environment validation and management
-- Configuration schema validation
-- Type-safe configuration access
-- Environment-specific overrides
-
-## 🔧 Development Guidelines
+##  Development Guidelines
 
 ### Code Style
 - **TypeScript strict mode** always enabled
@@ -106,7 +85,14 @@ Siriux follows enterprise N-tier architecture for applications:
 - **Usage examples** in documentation
 - **Changelog** for version changes
 
-## 🚫 Anti-Patterns to Avoid
+## 🎯 Development Guidelines
+
+### When Working on Siriux:
+1. **Check package boundaries** - Don't mix concerns
+2. **Import from core** - Use @siriux/core for types
+3. **Maintain compatibility** - Don't break existing APIs
+4. **Write tests** - Add tests for new functionality
+5. **Update docs** - Document API changes
 
 ### NEVER Do:
 - Put implementation logic in @siriux/core
@@ -121,16 +107,6 @@ Siriux follows enterprise N-tier architecture for applications:
 - Use dependency injection for extensibility
 - Write comprehensive tests
 - Follow semantic versioning
-
-## 🎯 AI Assistant Guidelines
-
-### When Working on Siriux:
-
-1. **Check package boundaries** - Don't mix concerns
-2. **Import from core** - Use @siriux/core for types
-3. **Maintain compatibility** - Don't break existing APIs
-4. **Write tests** - Add tests for new functionality
-5. **Update docs** - Document API changes
 
 ## 🔍 Code Review Checklist
 
