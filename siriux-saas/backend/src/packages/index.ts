@@ -30,7 +30,7 @@ export function createAuthMiddleware(config?: any): any {
 }
 
 // Database
-export { PostgresDatabase, getPostgresConfig } from './types';
+export { PostgresDatabase, getPostgresConfig, getSnowflakeConfig } from './types';
 
 // Version information
 export const SIRIUX_CONFIG_VERSION = '1.0.0';

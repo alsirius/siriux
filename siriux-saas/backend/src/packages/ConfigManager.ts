@@ -27,7 +27,10 @@ export function createDefaultConfig(): SiriuxConfig {
     server: {
       port: 8000,
       host: 'localhost',
-      cors: true,
+      cors: {
+        origin: 'http://localhost:3000',
+        credentials: true
+      },
       helmet: true
     },
     database: {
@@ -45,16 +48,26 @@ export function createDefaultConfig(): SiriuxConfig {
     },
     logging: {
       level: 'info',
-      service: 'siriux-app',
-      environment: 'development'
+      format: 'json',
+      transports: [
+        { type: 'console' }
+      ]
     },
     features: {
-      enableRegistration: true,
-      enableEmailVerification: false,
-      enablePasswordReset: true,
-      enableSocialLogin: false,
-      enableAuditLogs: true,
-      enableRateLimiting: true
+      authentication: true,
+      userManagement: true,
+      analytics: false,
+      blog: false,
+      marketplace: false,
+      forums: false,
+      events: false,
+      newsletter: false,
+      payments: false,
+      notifications: true,
+      apiRateLimiting: true,
+      auditLogging: true,
+      multiTenant: false,
+      whiteLabel: false
     }
   };
 }
@@ -137,9 +150,6 @@ export class ConfigManager {
       app: this.buildAppConfig(env),
       server: this.buildServerConfig(env),
       database: this.buildDatabaseConfig(env),
-      redis: this.buildRedisConfig(env),
-      email: this.buildEmailConfig(env),
-      storage: this.buildStorageConfig(env),
       auth: this.buildAuthConfig(env),
       logging: this.buildLoggingConfig(env),
       features: this.buildFeatureFlags(env),
@@ -151,6 +161,7 @@ export class ConfigManager {
     return {
       name: env.APP_NAME || 'Siriux App',
       version: env.APP_VERSION || '1.0.0',
+      description: env.APP_DESCRIPTION || 'Siriux SaaS Platform',
       environment: env.NODE_ENV || 'development',
       url: env.APP_URL || 'http://localhost:3000',
       supportEmail: env.SUPPORT_EMAIL || 'support@example.com',

@@ -20,7 +20,7 @@ export class AuthMiddleware {
 
   constructor(config: SiriuxConfig) {
     this.config = config;
-    this.jwtSecret = config.jwtSecret;
+    this.jwtSecret = config.auth.jwtSecret;
     if (!this.jwtSecret) {
       throw new AuthenticationError('JWT_SECRET is required', 'MISSING_SECRET');
     }
@@ -152,7 +152,7 @@ export class AuthMiddleware {
   public generateRefreshToken(userId: string): string {
     return jwt.sign(
       { userId, type: 'refresh' },
-      this.config.jwtRefreshSecret || this.jwtSecret,
+      this.config.auth.jwtRefreshSecret || this.jwtSecret,
       { expiresIn: '7d' }
     );
   }
@@ -161,7 +161,7 @@ export class AuthMiddleware {
    * Verify refresh token
    */
   public verifyRefreshToken(token: string): { userId: string; type: string } {
-    return jwt.verify(token, this.config.jwtRefreshSecret || this.jwtSecret) as { userId: string; type: string };
+    return jwt.verify(token, this.config.auth.jwtRefreshSecret || this.jwtSecret) as { userId: string; type: string };
   }
 
   /**

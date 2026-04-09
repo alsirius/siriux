@@ -321,6 +321,22 @@ export function getPostgresConfig(): DatabaseConfig {
   };
 }
 
+export function getSnowflakeConfig(): DatabaseConfig {
+  return {
+    type: 'snowflake',
+    host: process.env.SNOWFLAKE_HOST || 'snowflakecomputing.com',
+    port: 443,
+    database: process.env.SNOWFLAKE_DATABASE || 'siriux',
+    username: process.env.SNOWFLAKE_USERNAME || 'user',
+    password: process.env.SNOWFLAKE_PASSWORD || 'password',
+    ssl: true,
+    account: process.env.SNOWFLAKE_ACCOUNT || 'account',
+    warehouse: process.env.SNOWFLAKE_WAREHOUSE || 'warehouse',
+    schema: process.env.SNOWFLAKE_SCHEMA || 'public',
+    role: process.env.SNOWFLAKE_ROLE || 'default'
+  };
+}
+
 // Main configuration interface
 export interface SiriuxConfig {
   app: {
@@ -332,7 +348,10 @@ export interface SiriuxConfig {
   server: {
     port: number;
     host: string;
-    cors: boolean;
+    cors: {
+      origin: string | string[];
+      credentials: boolean;
+    };
     helmet: boolean;
   };
   database: DatabaseConfig;
@@ -343,29 +362,45 @@ export interface SiriuxConfig {
     jwtRefreshSecret?: string;
   };
   logging: {
-    level: string;
-    service: string;
-    environment: string;
+    level: 'error' | 'warn' | 'info' | 'debug';
+    format: 'json' | 'simple';
+    transports: Array<{
+      type: 'console' | 'file' | 'http';
+      options?: Record<string, any>;
+    }>;
   };
   features: {
-    enableRegistration: boolean;
-    enableEmailVerification: boolean;
-    enablePasswordReset: boolean;
-    enableSocialLogin: boolean;
-    enableAuditLogs: boolean;
-    enableRateLimiting: boolean;
+    authentication: boolean;
+    userManagement: boolean;
+    analytics: boolean;
+    blog: boolean;
+    marketplace: boolean;
+    forums: boolean;
+    events: boolean;
+    newsletter: boolean;
+    payments: boolean;
+    notifications: boolean;
+    apiRateLimiting: boolean;
+    auditLogging: boolean;
+    multiTenant: boolean;
+    whiteLabel: boolean;
   };
 }
 
 // Configuration schema types
 export interface DatabaseConfig {
-  type: 'postgresql' | 'mysql' | 'sqlite' | 'mongodb';
+  type: 'postgresql' | 'snowflake' | 'mongodb';
   host: string;
   port: number;
   database: string;
-  username?: string;
-  password?: string;
+  username: string;
+  password: string;
   ssl?: boolean;
+  // Snowflake specific
+  account?: string;
+  warehouse?: string;
+  schema?: string;
+  role?: string;
   pool?: {
     min: number;
     max: number;
@@ -500,6 +535,7 @@ export interface ServerConfig {
 export interface AppConfig {
   name: string;
   version: string;
+  description: string;
   environment: 'development' | 'staging' | 'production';
   url: string;
   supportEmail: string;
