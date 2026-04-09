@@ -68,12 +68,6 @@ Siriux follows enterprise N-tier architecture for applications:
 - Database-agnostic (teams provide their own user storage)
 - Follow @siriux/core contracts
 
-#### @siriux/ui
-- React components with TypeScript
-- Tailwind CSS for styling
-- Authentication context and hooks
-- Storybook stories for components
-
 #### @siriux/access-control
 - Role-based access control (RBAC)
 - Security guards and middleware

@@ -27,9 +27,9 @@ We implement a classic 4-tier architecture:
 ### 2. Package-Based Modularity
 
 Following the Siriux platform rules:
-- **@siriux/core**: Contracts, types, interfaces ONLY
-- **@siriux/auth**: Authentication middleware and JWT logic
-- **@siriux/ui**: React components and auth context
+- **@siriux/core**: Core utilities & database interfaces
+- **@siriux/auth**: Authentication & security
+- **@siriux/access-control**: RBAC & permissions
 - **@siriux/config**: Configuration management
 - **@siriux/logging**: Structured logging utilities
 
@@ -49,7 +49,6 @@ siriux-monorepo/
 ├── packages/                    # @siriux package ecosystem
 │   ├── core/                 # Types and interfaces
 │   ├── auth/                 # Authentication middleware
-│   ├── ui/                   # React components
 │   ├── config/                # Configuration management
 │   ├── logging/               # Logging utilities
 │   └── docs/                  # Documentation
@@ -82,7 +81,6 @@ siriux-monorepo/
 - Next.js 14+ with App Router
 - React 18+ with TypeScript
 - Tailwind CSS for styling
-- @siriux/ui components for consistency
 
 **Key Responsibilities:**
 - User interface and experience

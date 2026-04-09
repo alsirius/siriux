@@ -67,12 +67,11 @@ Siriux is organized as a collection of focused packages that work together but c
 - 🌙 Dark mode support
 - 📖 API documentation templates
 
-## �🔄 Package Dependencies
+## 🔄 Package Dependencies
 
 ```
 @siriux/core (v2.0.0)
 ├── @siriux/auth (v1.0.0) ── depends on core
-├── @siriux/ui (v1.0.0) ──── depends on core
 ├── @siriux/access-control (v1.0.0) ── depends on core
 ├── @siriux/logging (v1.0.0) ── depends on core
 ├── @siriux/config (v1.0.0) ── depends on core
@@ -86,24 +85,19 @@ Siriux is organized as a collection of focused packages that work together but c
 npm install @siriux/core @siriux/auth
 ```
 
-### UI Components Only  
-```bash
-npm install @siriux/core @siriux/ui
-```
-
 ### Full Stack with Security
 ```bash
-npm install @siriux/core @siriux/auth @siriux/ui @siriux/access-control
+npm install @siriux/core @siriux/auth @siriux/access-control
 ```
 
 ### Complete SaaS Platform
 ```bash
-npm install @siriux/core @siriux/auth @siriux/ui @siriux/access-control @siriux/logging @siriux/config
+npm install @siriux/core @siriux/auth @siriux/access-control @siriux/logging @siriux/config
 ```
 
 ### All Packages
 ```bash
-npm install @siriux/core @siriux/auth @siriux/ui @siriux/access-control @siriux/logging @siriux/config @siriux/docs
+npm install @siriux/core @siriux/auth @siriux/access-control @siriux/logging @siriux/config @siriux/docs
 ```
 
 ## 🚀 Installation
@@ -112,14 +106,13 @@ npm install @siriux/core @siriux/auth @siriux/ui @siriux/access-control @siriux/
 # Individual packages
 npm install @siriux/core
 npm install @siriux/auth  
-npm install @siriux/ui
 npm install @siriux/access-control
 npm install @siriux/logging
 npm install @siriux/config
 npm install @siriux/docs
 
 # Or all at once
-npm install @siriux/core @siriux/auth @siriux/ui @siriux/access-control @siriux/logging @siriux/config @siriux/docs
+npm install @siriux/core @siriux/auth @siriux/access-control @siriux/logging @siriux/config @siriux/docs
 ```
 
 ### CLI Tool

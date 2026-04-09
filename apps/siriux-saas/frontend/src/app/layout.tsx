@@ -1,7 +1,7 @@
+import React from 'react';
 import './globals.css';
 import type { Metadata } from 'next';
 import { appConfig } from '../../config/app-config';
-import { ThemeProvider } from '../components/ThemeProvider';
 
 export const metadata: Metadata = {
   title: appConfig.app.name,
@@ -16,9 +16,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <ThemeProvider>
-          {children}
-        </ThemeProvider>
+        {children}
       </body>
     </html>
   );

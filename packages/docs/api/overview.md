@@ -10,9 +10,6 @@ Type contracts, interfaces, and utilities for the Siriux platform.
 ### [@siriux/auth](../packages/auth.md)
 JWT authentication middleware and utilities.
 
-### [@siriux/ui](../packages/ui.md)
-React UI components and authentication context.
-
 ### [@siriux/access-control](../packages/access-control.md)
 Role-based access control and security guards.
 

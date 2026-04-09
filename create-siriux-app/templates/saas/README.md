@@ -152,7 +152,6 @@ JWT_SECRET=your-super-secret-jwt-key
 - **Next.js 14** - React framework
 - **TypeScript** - Type safety
 - **Tailwind CSS** - Styling
-- **@siriux/ui** - UI components
 - **@siriux/auth** - Authentication
 
 ### Backend
@@ -163,6 +162,8 @@ JWT_SECRET=your-super-secret-jwt-key
 - **@siriux/auth** - Authentication
 - **@siriux/access-control** - RBAC
 - **@siriux/logging** - Logging
+- **@siriux/core**: Core utilities & database interfaces
+- **@siriux/config**: Configuration management
 
 ## 📚 Learn More
 

@@ -36,7 +36,7 @@ export interface RegisterData {
   lastName: string;
 }
 
-// Simple context like ticket-mix - no SSR-safe wrappers
+// SSR-safe auth context
 const AuthContext = createContext<AuthContextType>({
   user: null,
   tokens: null,
@@ -49,6 +49,7 @@ const AuthContext = createContext<AuthContextType>({
   updateProfile: async () => {}
 });
 
+// SSR-safe hook that avoids window/localStorage during SSR
 export const useDemoAuth = () => useContext(AuthContext);
 
 export const DemoAuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
@@ -145,7 +146,7 @@ export const DemoAuthProvider: React.FC<{ children: ReactNode }> = ({ children }
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString()
     };
-
+    
     const userTokens = generateTokens(newUser.id);
     setUser(newUser);
     setTokens(userTokens);
@@ -172,7 +173,7 @@ export const DemoAuthProvider: React.FC<{ children: ReactNode }> = ({ children }
     if (!user) {
       throw new Error('No user logged in');
     }
-
+    
     // Simulate token refresh
     await new Promise(resolve => setTimeout(resolve, 300));
     
@@ -187,7 +188,7 @@ export const DemoAuthProvider: React.FC<{ children: ReactNode }> = ({ children }
     if (!user) {
       throw new Error('No user logged in');
     }
-
+    
     // Simulate API delay
     await new Promise(resolve => setTimeout(resolve, 500));
     

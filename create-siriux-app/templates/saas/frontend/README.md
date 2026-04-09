@@ -177,12 +177,11 @@ docker run -p 3000:3000 siriux-saas
 
 This starter kit is built with the following Siriux packages:
 
-- **@siriux/core** - Type contracts and interfaces
-- **@siriux/auth** - Authentication middleware
-- **@siriux/ui** - React UI components
-- **@siriux/access-control** - Role-based permissions
-- **@siriux/logging** - Structured logging
-- **@siriux/config** - Configuration management
+- **@siriux/core**: Core utilities & database interfaces
+- **@siriux/auth**: Authentication & security
+- **@siriux/access-control**: RBAC & permissions
+- **@siriux/config**: Configuration management
+- **@siriux/logging**: Structured logging
 
 ## 🛠️ Development
 

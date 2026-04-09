@@ -23,35 +23,40 @@ export default defineConfig({
       { text: 'Packages', link: '/packages/overview' }
     ],
 
-    sidebar: [
-      {
-        text: 'Guides',
-        items: [
-          { text: 'Getting Started', link: '/guides/getting-started' },
-          { text: 'AI-Powered SaaS', link: '/guides/ai-powered-saas' }
-        ]
-      },
-      {
-        text: 'Packages',
-        items: [
-          { text: 'Overview', link: '/packages/overview' },
-          { text: '@siriux/core', link: '/packages/core' },
-          { text: '@siriux/auth', link: '/packages/auth' },
-          { text: '@siriux/ui', link: '/packages/ui' },
-          { text: '@siriux/access-control', link: '/packages/access-control' },
-          { text: '@siriux/logging', link: '/packages/logging' },
-          { text: '@siriux/config', link: '/packages/config' },
-          { text: '@siriux/docs', link: '/packages/docs' }
-        ]
-      },
-      {
-        text: 'Tools',
-        items: [
-          { text: 'CLI Tool', link: '/tools/cli' },
-          { text: 'Starter Kit', link: '/tools/starter-kit' }
-        ]
-      }
-    ],
+    sidebar: {
+      '/packages/': [
+        {
+          text: 'Overview',
+          items: [
+            { text: 'All Packages', link: '/packages/overview' },
+            { text: 'Core', link: '/packages/core' },
+            { text: 'Auth', link: '/packages/auth' },
+            { text: 'Access Control', link: '/packages/access-control' },
+            { text: 'Config', link: '/packages/config' },
+            { text: 'Logging', link: '/packages/logging' },
+            { text: '@siriux/docs', link: '/packages/docs' }
+          ]
+        }
+      ],
+      '/guides/': [
+        {
+          text: 'Guides',
+          items: [
+            { text: 'Getting Started', link: '/guides/getting-started' },
+            { text: 'AI-Powered SaaS', link: '/guides/ai-powered-saas' }
+          ]
+        }
+      ],
+      '/tools/': [
+        {
+          text: 'Tools',
+          items: [
+            { text: 'CLI Tool', link: '/tools/cli' },
+            { text: 'Starter Kit', link: '/tools/starter-kit' }
+          ]
+        }
+      ]
+    },
 
     socialLinks: [
       { icon: 'github', link: 'https://github.com/jawwadbukhari/siriux' }

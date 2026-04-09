@@ -1,12 +1,12 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // Standard server deployment for EC2
-  images: {
-    domains: ['localhost'],
-    unoptimized: true
+  experimental: {
+    appDir: true,
   },
   webpack: (config, { isServer }) => {
+    // Fixes the "use client" directive issue
     config.resolve.fallback = {
+      ...config.resolve.fallback,
       fs: false,
       net: false,
       child_process: false,

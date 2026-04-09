@@ -117,59 +117,6 @@ const newTokens = await authService.refreshToken(refreshToken);
 await authService.logout(accessToken);
 ```
 
-### @siriux/ui v0.0.1
-
-**Modern React UI components**
-
-```bash
-npm install @siriux/ui@0.0.1
-```
-
-#### Features
-
-- **SSR-safe components** with proper 'use client' directives
-- **Authentication forms** (Login, Register, Forgot Password)
-- **Layout components** (Header, Sidebar, Footer)
-- **UI primitives** (Buttons, Cards, Inputs, Modals)
-- **Theme support** with Tailwind CSS
-
-#### Key Exports
-
-```typescript
-// Auth Components
-import { LoginForm, RegisterForm, ForgotPasswordForm } from '@siriux/ui';
-
-// Layout Components
-import { Header, Sidebar, Footer } from '@siriux/ui';
-
-// UI Components
-import { Button, Card, Input, Modal } from '@siriux/ui';
-
-// Auth Context
-import { useAuth } from '@siriux/ui';
-```
-
-#### Usage Example
-
-```typescript
-import { LoginForm, useAuth } from '@siriux/ui';
-
-function LoginPage() {
-  const { login } = useAuth();
-
-  const handleLogin = async (credentials) => {
-    try {
-      await login(credentials);
-      // Redirect to dashboard
-    } catch (error) {
-      // Handle error
-    }
-  };
-
-  return <LoginForm onSubmit={handleLogin} />;
-}
-```
-
 ### @siriux/access-control v0.0.1
 
 **Role-based access control (RBAC)**
@@ -334,7 +281,6 @@ Each package only depends on external, well-maintained npm packages:
 
 - **@siriux/core**: bcryptjs, cors, dotenv, express, joi, jsonwebtoken, uuid, winston
 - **@siriux/auth**: bcryptjs, cors, dotenv, express, joi, jsonwebtoken, uuid, winston
-- **@siriux/ui**: @radix-ui/* components, class-variance-authority, clsx, lucide-react, tailwind-merge
 - **@siriux/access-control**: joi
 - **@siriux/config**: dotenv, joi
 - **@siriux/logging**: uuid, winston, winston-daily-rotate-file
@@ -354,12 +300,11 @@ Each package only depends on external, well-maintained npm packages:
 
 ```typescript
 // Install all packages
-npm install @siriux/core@0.0.1 @siriux/auth@0.0.1 @siriux/ui@0.0.1 @siriux/access-control@0.0.1 @siriux/config@0.0.1 @siriux/logging@0.0.1
+npm install @siriux/core@0.0.1 @siriux/auth@0.0.1 @siriux/access-control@0.0.1 @siriux/config@0.0.1 @siriux/logging@0.0.1
 
 // Import what you need
 import { InMemoryMockDatabase } from '@siriux/core';
 import { MockAuthService } from '@siriux/auth';
-import { LoginForm, useAuth } from '@siriux/ui';
 import { AccessControlManager } from '@siriux/access-control';
 import { ConfigManager } from '@siriux/config';
 import { SiriuxLogger } from '@siriux/logging';
@@ -386,28 +331,7 @@ app.use('/api/admin', acm.requireRole('admin'));
 app.listen(3000);
 ```
 
-### 3. React Integration
-
-```typescript
-import React from 'react';
-import { LoginForm, RegisterForm, Header, Sidebar } from '@siriux/ui';
-import { useAuth } from '@siriux/ui';
-
-function App() {
-  const { user, login, logout } = useAuth();
-
-  return (
-    <div>
-      <Header user={user} onLogout={logout} />
-      <Sidebar>
-        {user ? <Dashboard /> : <LoginForm onLogin={login} />}
-      </Sidebar>
-    </div>
-  );
-}
-```
-
-### 4. Database Integration
+### 3. Database Integration
 
 ```typescript
 import { InMemoryMockDatabase, SQLiteMockDatabase } from '@siriux/core';
@@ -444,7 +368,7 @@ All packages are versioned consistently:
 
 ```bash
 # Update all packages to latest
-npm update @siriux/core @siriux/auth @siriux/ui @siriux/access-control @siriux/config @siriux/logging
+npm update @siriux/core @siriux/auth @siriux/access-control @siriux/config @siriux/logging
 
 # Or update specific package
 npm install @siriux/core@latest

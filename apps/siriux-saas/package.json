@@ -23,7 +23,6 @@
   "dependencies": {
     "@siriux/core": "^0.0.1",
     "@siriux/auth": "^0.0.1",
-    "@siriux/ui": "^0.0.1",
     "@siriux/config": "^0.0.1",
     "@siriux/logging": "^0.0.1",
     "express": "^4.18.2",

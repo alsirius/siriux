@@ -11,12 +11,6 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
-    "@siriux/access-control": "^0.0.1",
-    "@siriux/auth": "^0.0.1",
-    "@siriux/config": "^0.0.1",
-    "@siriux/core": "^0.0.1",
-    "@siriux/logging": "^0.0.1",
-    "@siriux/ui": "^0.0.1",
     "@types/node": "^20.10.5",
     "@types/react": "^18.2.45",
     "@types/react-dom": "^18.2.18",

@@ -13,7 +13,6 @@
   "dependencies": {
     "@siriux/core": "file:../../packages/core",
     "@siriux/auth": "file:../../packages/auth",
-    "@siriux/ui": "file:../../packages/ui",
     "@siriux/access-control": "file:../../packages/access-control",
     "@siriux/logging": "file:../../packages/logging",
     "@siriux/config": "file:../../packages/config",

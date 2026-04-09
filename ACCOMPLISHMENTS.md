@@ -80,31 +80,8 @@
 ### **Documentation Coverage**:
 - ✅ @siriux/core contracts and usage
 - ✅ @siriux/auth implementation guide
-- ✅ @siriux/ui component library
 - ✅ @siriux/access-control RBAC system
 - ✅ Complete getting started tutorial
-
-## 🎨 **UI Component Library**
-
-### **Authentication Components**:
-- ✅ LoginForm - Complete with validation
-- ✅ RegisterForm - Full registration flow
-- ✅ ForgotPasswordForm - Password reset functionality
-
-### **Layout Components**:
-- ✅ Header - Navigation and user menu
-- ✅ Sidebar - Collapsible navigation
-- ✅ Footer - Comprehensive footer with links
-
-### **UI Components**:
-- ✅ Button - Multiple variants and sizes with Radix UI
-- ✅ Input - Form input with validation and accessibility
-- ✅ Card - Flexible card component
-- ✅ Badge - Status and info badges
-- ✅ Separator - Visual separators
-- ✅ Modal - Accessible modal dialogs
-- ✅ Navigation - Complete navigation components
-- ✅ Icon - Hybrid icon system with Lucide React + custom SVGs
 
 ## 🔐 **Security & Access Control**
 

@@ -15,17 +15,30 @@ const ThemeContext = createContext<ThemeContextType>({
   toggleDarkMode: () => {}
 });
 
-export const useTheme = () => useContext(ThemeContext);
+// SSR-safe hook that returns default values during SSR
+export const useTheme = () => {
+  if (typeof window === 'undefined') {
+    // Return default values during SSR
+    return {
+      theme: appConfig.theme,
+      isDarkMode: appConfig.theme.darkMode,
+      toggleDarkMode: () => {}
+    };
+  }
+  return useContext(ThemeContext);
+};
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [isDarkMode, setIsDarkMode] = useState(appConfig.theme.darkMode);
 
   useEffect(() => {
-    // Apply theme to document
-    if (isDarkMode) {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
+    // Apply theme to document (client-side only)
+    if (typeof window !== 'undefined') {
+      if (isDarkMode) {
+        document.documentElement.classList.add('dark');
+      } else {
+        document.documentElement.classList.remove('dark');
+      }
     }
   }, [isDarkMode]);
 

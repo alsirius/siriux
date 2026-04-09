@@ -1,8 +1,8 @@
-# Siriux Monorepo 🚀
+# Siriux Monorepo 
 
 A comprehensive SaaS starter kit monorepo containing reusable packages for building modern web applications.
 
-## 📦 Packages
+## Packages
 
 ### @siriux/core
 Authentication, database, and API utilities for Node.js/Express applications.
@@ -79,12 +79,11 @@ siriux-monorepo/
 ├── packages/
 │   ├── core/         # Authentication and API utilities
 │   ├── auth/         # JWT authentication middleware
-│   ├── ui/           # React component library
 │   ├── access-control/ # RBAC and security guards
 │   ├── logging/      # Structured logging with correlation IDs
 │   ├── config/       # Environment validation and management
 │   ├── docs/         # Documentation site
-│   └── ui-starter/   # Deprecated (use @siriux/ui instead)
+│   └── ui-starter/   # Deprecated 
 ├── apps/
 │   └── starter-next-saas/ # Dynamic SaaS starter kit
 ├── create-siriux-app/ # CLI tool for project scaffolding

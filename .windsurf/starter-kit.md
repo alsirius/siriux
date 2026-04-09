@@ -144,16 +144,18 @@ CREATE TABLE users (
 
 ### Component Usage
 ```typescript
-// Use @siriux/ui components
-import { LoginForm, useAuth } from '@siriux/ui';
+// Build custom UI components using React and TailwindCSS
+// Authentication logic handled by @siriux/auth package
 
 function LoginPage() {
+  const handleSubmit = async (credentials) => {
+    // Handle login with @siriux/auth
+  };
+
   return (
-    <LoginForm 
-      onSuccess={(user, tokens) => {
-        // Handle successful login
-      }}
-    />
+    <form onSubmit={handleSubmit}>
+      {/* Custom login form implementation */}
+    </form>
   );
 }
 ```

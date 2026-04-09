@@ -27,13 +27,13 @@ Choose the packages you need:
 
 ```bash
 # Full stack (backend + frontend)
-npm install @siriux/core @siriux/auth @siriux/ui
+npm install @siriux/core @siriux/auth @siriux/access-control @siriux/config @siriux/logging
 
 # Backend only
 npm install @siriux/core @siriux/auth
 
 # Frontend only  
-npm install @siriux/core @siriux/ui
+npm install @siriux/core
 ```
 
 ### 2. Backend Setup (Express)

@@ -23,11 +23,7 @@ features:
     title: Authentication
     details: JWT-based authentication middleware with role-based access control, session management, and security best practices.
     link: /packages/auth
-  - icon: 🎨
-    title: UI Components
-    details: Modern React components with authentication context, forms, and layouts built for SaaS applications.
-    link: /packages/ui
-  - icon: 🏗️
+  - icon: ️
     title: Core Contracts
     details: TypeScript interfaces and contracts that provide a stable foundation for all Siriux packages.
     link: /packages/core
@@ -98,7 +94,6 @@ SNOWFLAKE_ACCOUNT=your-account.snowflakecomputing.com
 |---------|-------------|--------|
 | **[@siriux/core](packages/core.md)** | Core utilities & database | ✅ Production Ready |
 | **[@siriux/auth](packages/auth.md)** | Authentication & security | ✅ Production Ready |
-| **[@siriux/ui](packages/ui.md)** | React components | ✅ Production Ready |
 | **[@siriux/access-control](packages/access-control.md)** | RBAC & permissions | ✅ Production Ready |
 | **[@siriux/logging](packages/logging.md)** | Multi-output logging | ✅ Production Ready |
 | **[@siriux/config](packages/config.md)** | Configuration management | ✅ Production Ready |
